@@ -5,6 +5,7 @@ import axios from 'axios'
 
 function App() {
   async function apiTest() {
+    console.log('attempting to hit api...')
     try {
       let response = await axios.get('/api/WeatherForecast/omega')
       console.log(response)

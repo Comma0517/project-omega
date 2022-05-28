@@ -40,18 +40,23 @@ namespace Omega.Controllers
         [HttpGet("strings")]
         public IEnumerable<string> GetStrings()
         {
-            return new string[] {"these", "are", "some", "other", "strings"};
+            return new string[] { "these", "are", "some", "other", "strings" };
         }
-        
+
         [HttpGet("omega")]
         public async Task<IActionResult> OmegaTest()
         {
             string responseString;
-            using(var client = new HttpClient())
+            var handler = new HttpClientHandler
+            {
+                ClientCertificateOptions = ClientCertificateOption.Manual,
+                ServerCertificateCustomValidationCallback = (httpRequestMessage, cert, cetChain, policyErrors) => true
+            };
+            using (var client = new HttpClient(handler))
             {
                 responseString = await client.GetStringAsync("https://localhost:5003/api/WeatherForecast/strings");
             }
-            
+
             return Ok("stuff from gateway + stuff from other service instance: " + responseString);
         }
     }
