@@ -4,10 +4,10 @@ import './App.css';
 import axios from 'axios'
 
 function App() {
-  async function apiTest() {
+  async function apiTest(weatherEndpoint: string = '') {
     console.log('attempting to hit api...')
     try {
-      let response = await axios.get('/api/WeatherForecast/omega')
+      let response = await axios.get(`/api/WeatherForecast/${weatherEndpoint}`)
       console.log(response)
     } catch (err) {
       console.log('Error accessing api: ', err)
@@ -20,7 +20,8 @@ function App() {
         <img src={logo} className="App-logo" alt="logo" />
         <p>Edit <code>src/App.tsx</code> and save to reload.</p>
         <a className="App-link" href="https://reactjs.org" target="_blank" rel="noopener noreferrer">Learn React</a>
-        <p><button onClick={apiTest}>API Test</button> (see console)</p>
+        <p><button onClick={() => apiTest()}>Weather API Test</button> (see console)</p>
+        <p><button onClick={() => apiTest('omega')}>Omega API Test</button> (see console)</p>
       </header>
     </div>
   );
