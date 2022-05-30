@@ -1,21 +1,17 @@
 #!/bin/bash 
 
-# Old vanilla way
 # docker build -t omega:1.0  .
 
 # Publishing outside of this proecess for now since it's slow and we're just testing docker config
 # echo "publishing Release version of app..."
-# pushd ../
+# TODO: push dir
 # dotnet publish -c Release
-# popd
+# TODO: pop dir
 
 echo "copying files to ./app..."
 rm -rf ./app
 mkdir ./app
-cp -r ../Omega/bin/Release/net5.0/publish/. ./app/
-rm -rf ./app/client-app
-mkdir -p ./app/client-app/build
-cp -r ../Omega/client-app/build ./app/client-app/
+cp -r ../Omega/bin/Release/net5.0/publish/* ./app/
 
 echo "running docker-compose build"
 docker-compose build

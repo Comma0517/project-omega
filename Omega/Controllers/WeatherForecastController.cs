@@ -54,10 +54,16 @@ namespace Omega.Controllers
             };
             using (var client = new HttpClient(handler))
             {
-                responseString = await client.GetStringAsync("https://localhost:5003/api/WeatherForecast/strings");
+                responseString = await client.GetStringAsync($"http://{EnvHelper.CORE_HOST}:{EnvHelper.CORE_PORT}/api/WeatherForecast/strings");
             }
 
             return Ok("stuff from gateway + stuff from other service instance: " + responseString);
+        }
+        
+        [HttpGet("isWeb")]
+        public IActionResult IsWeb()
+        {
+            return Ok(EnvHelper.IS_WEB);
         }
     }
 }

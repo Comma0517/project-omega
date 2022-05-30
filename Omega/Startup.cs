@@ -1,3 +1,5 @@
+using System;
+using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -20,19 +22,33 @@ namespace Omega
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var root = Directory.GetCurrentDirectory();
+            var dotenv = Path.Combine(root, ".env");
+            DotEnv.Load(dotenv);
+            EnvHelper.Init();
 
             services.AddControllersWithViews();
 
             // In production, the React files will be served from this directory
-            services.AddSpaStaticFiles(configuration =>
+            if (EnvHelper.IS_WEB)
             {
-                configuration.RootPath = "client-app/build";
-            });
+                services.AddSpaStaticFiles(configuration =>
+                {
+                    configuration.RootPath = "client-app/build";
+                });
+            }
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            Console.WriteLine($"IsDevelopment: {env.IsDevelopment()}");
+            Console.WriteLine($"TEST_VAR: {Environment.GetEnvironmentVariable("TEST_VAR") ?? "null"}");
+            Console.WriteLine($"DOT_ENV_TEST_VAR: {Environment.GetEnvironmentVariable("DOT_ENV_TEST_VAR") ?? "null"}");
+            Console.WriteLine($"CORE_HOST: {EnvHelper.CORE_HOST}");
+            Console.WriteLine($"CORE_PORT: {EnvHelper.CORE_PORT}");
+            Console.WriteLine($"IS_WEB: {EnvHelper.IS_WEB}");
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -44,9 +60,12 @@ namespace Omega
                 // app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            // app.UseHttpsRedirection();
             app.UseStaticFiles();
-            app.UseSpaStaticFiles();
+            if (EnvHelper.IS_WEB)
+            {
+                app.UseSpaStaticFiles();
+            }
 
             app.UseRouting();
 
@@ -57,7 +76,7 @@ namespace Omega
                     pattern: "{controller}/{action=Index}/{id?}");
             });
 
-            if (!env.IsDevelopment())
+            if (!env.IsDevelopment() && EnvHelper.IS_WEB)
             {
                 app.UseSpa(spa =>
                 {
