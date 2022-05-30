@@ -3,10 +3,15 @@
 # Old vanilla way
 # docker build -t omega:1.0  .
 
-# Publishing outside of this proecess for now since it's slow and we're just testing docker config
+# Comment out dotnet publish/yarn build for faster testing of docker changes
+# TODO: new setup to do these in parllel (maybe with gulp?)
+# Note: WSL ubuntu bash hangs on the dotnet command...
 # echo "publishing Release version of app..."
 # pushd ../
 # dotnet publish -c Release
+# popd
+# pushd ../Omega/client-app/
+# yarn build
 # popd
 
 echo "copying files to ./app..."
