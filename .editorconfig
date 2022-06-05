@@ -1,7 +1,7 @@
 [*]
 indent_style = space
 
-[*.{js,ts,json,yml,tsx}]
+[*.{js,ts,json,yml,tsx,html}]
 indent_size = 2
 
 [*.cs]

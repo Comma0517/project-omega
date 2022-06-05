@@ -1,0 +1,3 @@
+#!/bin/bash
+
+dotnet watch -p Omega run

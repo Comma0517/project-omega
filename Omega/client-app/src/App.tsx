@@ -1,24 +1,45 @@
-import './App.css';
+import './App.css'
 import axios from 'axios'
+import { useState } from 'react'
+import Nav from './components/nav'
 
 function App() {
-  async function apiTest(weatherEndpoint: string = '') {
-    console.log('attempting to hit api...')
+  const [randomString, setRandomString] = useState('')
+  const [coreMessage, setCoreMessage] = useState('')
+
+  async function getRandomString() {
+    setRandomString('')
     try {
-      let response = await axios.get(`/api/WeatherForecast/${weatherEndpoint}`)
+      let response = await axios.get(`/api/Random`)
       console.log(response)
+      setRandomString(response.data)
     } catch (err) {
-      console.log('Error accessing api: ', err)
+      console.log('API error: ', err)
     }
   }
-  
+
+  async function serviceToServiceTest() {
+    setCoreMessage('')
+    try {
+      let response = await axios.get(`/api/SomeWeb`)
+      console.log(response)
+      setCoreMessage(JSON.stringify(response.data))
+    } catch (err) {
+      console.log('API error: ', err)
+    }
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <p><button onClick={() => apiTest()}>Weather API Test</button> (see console)</p>
-        <p><button onClick={() => apiTest('omega')}>Omega API Test</button> (see console)</p>
-      </header>
-    </div>
+    <>
+      <Nav></Nav>
+      <main role="main" className="container" style={{ paddingTop: 80 }}>
+        <h1>Project Omega</h1>
+        <p className="lead">The last enterprise web architecture pattern you'll ever need.<br /> Until the next one...</p>
+        <h3>Service Call Demo</h3>
+        <p><button className="btn btn-primary" onClick={() => getRandomString()}>Get a Random String</button>&nbsp;&nbsp;<span>{randomString}</span></p>
+        <p><button className="btn btn-primary" onClick={() => serviceToServiceTest()}>Service to Service Test</button>&nbsp;&nbsp;<span>{coreMessage}</span></p>
+      </main>
+    </>
   );
 }
 
