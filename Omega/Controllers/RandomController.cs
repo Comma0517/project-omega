@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Net.Http;
+using RandomStuff;
 
 namespace Omega.Controllers
 {
@@ -13,7 +14,6 @@ namespace Omega.Controllers
     public class RandomController : ControllerBase
     {
         private readonly ILogger<RandomController> _logger;
-        private static Random random = new Random();
 
         public RandomController(ILogger<RandomController> logger)
         {
@@ -24,7 +24,7 @@ namespace Omega.Controllers
         public IActionResult Get()
         {
             _logger.LogInformation("RandomController default route called");
-            return Ok(getRandomString(20));
+            return Ok(OmegaRandom.getRandomString(20));
         }
         
         [HttpGet("strings/{numStrings}")]
@@ -43,16 +43,10 @@ namespace Omega.Controllers
             var strings = new List<String>();
             for (int i = 0; i < numStrings; i++)
             {
-                strings.Add(getRandomString(20));
+                strings.Add(OmegaRandom.getRandomString(20));
             }
             
             return strings;
-        }
-
-        private string getRandomString(int length)
-        {
-            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890123456789";
-            return new string(Enumerable.Repeat(chars, length).Select(s => s[random.Next(s.Length)]).ToArray());
         }
     }
 }

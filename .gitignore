@@ -1,5 +1,7 @@
 .idea
 .vs
 **/node_modules
+**/obj
+**/bin
 docker/built_server_app
 docker/built_client_app

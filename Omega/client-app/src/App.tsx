@@ -28,10 +28,15 @@ function App() {
 }
 
 function Home() {
+  const [loading, setLoading] = useState(false)
   const [randomString, setRandomString] = useState('')
   const [coreMessage, setCoreMessage] = useState('')
 
   async function getRandomString() {
+    if (loading) {
+      return
+    }
+    setLoading(true)
     setRandomString('')
     try {
       let response = await axios.get(`/api/Random`)
@@ -39,17 +44,25 @@ function Home() {
       setRandomString(response.data)
     } catch (err) {
       console.log('API error: ', err)
+    } finally {
+      setLoading(false)
     }
   }
 
   async function serviceToServiceTest() {
+    if (loading) {
+      return
+    }
     setCoreMessage('')
+    setLoading(true)
     try {
       let response = await axios.get(`/api/SomeWeb`)
       console.log(response)
       setCoreMessage(JSON.stringify(response.data))
     } catch (err) {
       console.log('API error: ', err)
+    } finally {
+      setLoading(false)
     }
   }
 

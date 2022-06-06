@@ -5,6 +5,10 @@ VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Omega", "Omega\Omega.csproj", "{2686D6C8-B5ED-44CE-B46E-D44D0FFBB6CC}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OmegaLibs", "OmegaLibs", "{65205BF5-B65B-4271-AD89-5BA51C345258}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RandomStuff", "OmegaLibs\RandomStuff\RandomStuff.csproj", "{D6EB6C83-1D9C-482E-AE4B-7137EA43FA01}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +34,20 @@ Global
 		{2686D6C8-B5ED-44CE-B46E-D44D0FFBB6CC}.Release|x64.Build.0 = Release|Any CPU
 		{2686D6C8-B5ED-44CE-B46E-D44D0FFBB6CC}.Release|x86.ActiveCfg = Release|Any CPU
 		{2686D6C8-B5ED-44CE-B46E-D44D0FFBB6CC}.Release|x86.Build.0 = Release|Any CPU
+		{D6EB6C83-1D9C-482E-AE4B-7137EA43FA01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6EB6C83-1D9C-482E-AE4B-7137EA43FA01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6EB6C83-1D9C-482E-AE4B-7137EA43FA01}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D6EB6C83-1D9C-482E-AE4B-7137EA43FA01}.Debug|x64.Build.0 = Debug|Any CPU
+		{D6EB6C83-1D9C-482E-AE4B-7137EA43FA01}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D6EB6C83-1D9C-482E-AE4B-7137EA43FA01}.Debug|x86.Build.0 = Debug|Any CPU
+		{D6EB6C83-1D9C-482E-AE4B-7137EA43FA01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6EB6C83-1D9C-482E-AE4B-7137EA43FA01}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D6EB6C83-1D9C-482E-AE4B-7137EA43FA01}.Release|x64.ActiveCfg = Release|Any CPU
+		{D6EB6C83-1D9C-482E-AE4B-7137EA43FA01}.Release|x64.Build.0 = Release|Any CPU
+		{D6EB6C83-1D9C-482E-AE4B-7137EA43FA01}.Release|x86.ActiveCfg = Release|Any CPU
+		{D6EB6C83-1D9C-482E-AE4B-7137EA43FA01}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D6EB6C83-1D9C-482E-AE4B-7137EA43FA01} = {65205BF5-B65B-4271-AD89-5BA51C345258}
 	EndGlobalSection
 EndGlobal

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Net.Http;
+using RandomStuff;
 
 namespace Omega.Controllers
 {
@@ -24,7 +25,7 @@ namespace Omega.Controllers
         public string GetCoreMessage()
         {
             _logger.LogInformation("CoreController default route called");
-            return "Hello from the core service";
+            return "Hello from the core service. Here's a random number for you: " + OmegaRandom.getRandomNumber(1, 100);
         }
     }
 }
