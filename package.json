@@ -9,12 +9,22 @@
     "installAll": "yarn install && yarn --cwd Omega/client-app/ install",
     "client": "yarn --cwd Omega/client-app/ start",
     "server": "dotnet watch -p Omega run",
-    "build": "yarn gulp build"
+    "build": "yarn gulp build",
+    "bash:core": "yarn gulp dockerBash --image-name core",
+    "bash:web": "yarn gulp dockerBash --image-name web",
+    "dockerBuild": "yarn gulp dockerBuild",
+    "dockerUp": "yarn gulp dockerUp",
+    "dockerDown": "yarn gulp dockerDown",
+    "dockerStop": "yarn gulp dockerStop",
+    "dockerRecreate": "yarn gulp dockerRecreate",
+    "dockerRecreateFull": "yarn gulp dockerRecreateFull"
   },
   "devDependencies": {
     "@types/gulp": "^4.0.8",
     "gulp": "^4.0.2",
+    "rimraf": "^3.0.2",
     "ts-node": "^9.1.1",
-    "typescript": "^4.2.2"
+    "typescript": "^4.2.2",
+    "yargs": "^16.2.0"
   }
 }
