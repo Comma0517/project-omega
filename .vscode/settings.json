@@ -1,24 +1,26 @@
 {
-    // I want my default to be 4, but JavaScript/JSON to be 2
-    "editor.tabSize": 4,
-    "[javascript]": {
-        "editor.tabSize": 2
-    },
-    "[json]": {
-        "editor.tabSize": 2
-    },
-    "[typescript]": {
-        "editor.tabSize": 2
-    },
-    "[jsx]": {
-        "editor.tabSize": 2
-    },
-    "[tsx]": {
-        "editor.tabSize": 2
-    },
-    "[html]": {
-      "editor.tabSize": 2
+  "editor.tabSize": 4,
+  // No idea if these actually work... vscode sometimes reverts to 4 spaces for some reason
+  "[javascript]": {
+    "editor.tabSize": 2
   },
-    // This one forces the tab to be **space**
-    "editor.insertSpaces": true
+  "[json]": {
+    "editor.tabSize": 2
+  },
+  "[typescript]": {
+    "editor.tabSize": 2
+  },
+  "[jsx]": {
+    "editor.tabSize": 2
+  },
+  "[tsx]": {
+    "editor.tabSize": 2
+  },
+  "[html]": {
+    "editor.tabSize": 2
+  },
+  "[csharp]": {
+    "editor.tabSize": 2
+  },
+  "editor.insertSpaces": true
 }
