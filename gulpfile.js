@@ -3,7 +3,6 @@ const { spawn } = require('child_process')
 const argv = require('yargs').argv
 const path = require('path')
 const rimraf = require('rimraf')
-const fs = require('fs')
 const fsp = require('fs').promises
 
 const spawnOptions = {
@@ -63,39 +62,39 @@ async function dockerStop() {
 async function copyPublishedToDockerDir() {
   const dockerBuiltServerPath = path.join(__dirname, 'docker/built_server_app/')
   const dockerBuiltClientPath = path.join(__dirname, 'docker/built_client_app/')
-  console.log('dockerBuiltServerPath: ', dockerBuiltServerPath)
-  console.log('dockerBuiltClientPath: ', dockerBuiltClientPath)
   await Promise.all([
     new Promise(resolve => rimraf(dockerBuiltServerPath, resolve)),
     new Promise(resolve => rimraf(dockerBuiltClientPath, resolve))
   ])
   await Promise.all([fsp.mkdir(dockerBuiltServerPath), fsp.mkdir(dockerBuiltClientPath)])
-  
-  const builtServerPath = path.join(__dirname, 'Omega/bin/Release/net5.0/publish/')
-  const builtClientPath = path.join(__dirname, 'Omega/client-app/build/')
-  
-  console.log('builtServerPath: ', builtServerPath)
-  console.log('builtClientPath: ', builtClientPath)
-  console.log('------')
-  if (fs.existsSync(builtServerPath)) {
-    console.log('server path exists')
-  }
-  if (fs.existsSync(builtClientPath)) {
-    console.log('client path exists')
-  }
-  // return src('*', { base: builtServerPath }).pipe(dest('./docker/built_server_app'))
-  // return src('*', { base: 'Omega/bin/Release/net5.0/publish/' }).pipe(dest('./docker/built_server_app'))
-  // src('*', { base: builtClientPath }).pipe(dest(dockerBuiltClientPath))
+
+  // For excluding a dir, see https://github.com/gulpjs/gulp/issues/165#issuecomment-32611271
+  src(['Omega/bin/Release/net5.0/publish/**/*', '!**/client-app', '!**/client-app/**']).pipe(dest(dockerBuiltServerPath))
+  src('Omega/client-app/build/**/*').pipe(dest(dockerBuiltClientPath))
 }
 
 const build = parallel(dotnetPublish, yarnBuild)
 
+// Run dotnet publish and yarn build in parallel.
 exports.build = build
+
+// Run docker-compose build. Can also just run dockerUp since it will build if the image doesn't exist.
 exports.dockerBuild = dockerBuild
+
+// Build the docker images/network if they don't exist and start containers.
 exports.dockerUp = dockerUp
+
+// Tear down the docker containers/network.
 exports.dockerDown = dockerDown
+
+// Sometimes ctrl-C doesn't stop the containers and they're left running - stop with this task
 exports.dockerStop = dockerStop
+
+// Run images with bash entrypoint to troubleshoot what files are ending up in the built images. Requires an arg --image-name to be passed. See package.json for examples.
 exports.dockerBash = dockerBash
+
+// Good for rapidly making docker-compose changes and testing them
 exports.dockerRecreate = series(dockerDown, dockerUp)
-// exports.dockerRecreateFull = series(parallel(dockerDown, build), copyPublishedToDockerDir, dockerUp)
-exports.dockerRecreateFull = copyPublishedToDockerDir
+
+// Good for testing app in docker after making source changes. Completely rebuilds the images before bringing containers up.
+exports.dockerRecreateFull = series(parallel(dockerDown, build), copyPublishedToDockerDir, dockerBuild, dockerUp)

@@ -1,4 +1,5 @@
 .idea
 .vs
 **/node_modules
-docker/app
+docker/built_server_app
+docker/built_client_app

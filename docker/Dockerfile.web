@@ -5,7 +5,9 @@ FROM mcr.microsoft.com/dotnet/aspnet:5.0
 
 RUN echo "alias ll='ls -al --color'" >> ~/.bashrc
 
-COPY ./app/ app/
+COPY ./built_server_app/ app/
+RUN mkdir -p app/client-app/build
+COPY ./built_client_app/ app/client-app/build/
 
 WORKDIR /app
 
