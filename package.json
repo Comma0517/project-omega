@@ -9,6 +9,7 @@
     "installAll": "yarn install && yarn --cwd Omega/client-app/ install",
     "client": "yarn --cwd Omega/client-app/ start",
     "server": "dotnet watch -p Omega run",
+    "both": "concurrently \"yarn run client\" \"yarn run server\" --kill-others",
     "build": "yarn gulp build",
     "bash:core": "yarn gulp dockerBash --image-name core",
     "bash:web": "yarn gulp dockerBash --image-name web",
@@ -21,6 +22,7 @@
   },
   "devDependencies": {
     "@types/gulp": "^4.0.8",
+    "concurrently": "^6.0.0",
     "gulp": "^4.0.2",
     "rimraf": "^3.0.2",
     "ts-node": "^9.1.1",
