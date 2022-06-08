@@ -10,13 +10,13 @@ using RandomStuff;
 namespace Omega.Controllers.Core
 {
     [ApiController]
-    [Route("api/[controller]")]
-    public class CoreController : ControllerBase
+    [Route("api/Core/[controller]")]
+    public class DummyCoreController : ControllerBase
     {
-        private readonly ILogger<CoreController> _logger;
+        private readonly ILogger<DummyCoreController> _logger;
         private static Random random = new Random();
 
-        public CoreController(ILogger<CoreController> logger)
+        public DummyCoreController(ILogger<DummyCoreController> logger)
         {
             _logger = logger;
         }

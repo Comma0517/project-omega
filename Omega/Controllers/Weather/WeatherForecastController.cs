@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Net.Http;
 
+// This came with the default .net core template. Delete eventually.
 namespace Omega.Controllers.Web
 {
     [ApiController]

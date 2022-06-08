@@ -56,7 +56,7 @@ function Home() {
     setCoreMessage('')
     setLoading(true)
     try {
-      let response = await axios.get(`/api/SomeWeb`)
+      let response = await axios.get(`/api/SomeWebEndpoint`)
       console.log(response)
       setCoreMessage(JSON.stringify(response.data))
     } catch (err) {
