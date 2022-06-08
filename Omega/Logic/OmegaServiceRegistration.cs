@@ -13,28 +13,40 @@ namespace Omega.Logic
 
         public OmegaServiceRegistration()
         {
+            // Unsure what the right way to setup logging during startup. It changed for .net core 3.x - research this.
             using var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
             _logger = loggerFactory.CreateLogger<OmegaServiceRegistration>();
         }
 
         public void InitServices()
         {
-            _logger.LogInformation("Registering Omega Services...");
+            _logger.LogInformation("\n-----------------------------\nRegistering Omega Services...\n");
             var services = new List<ProjectOmegaService>();
-            
-            // We could scan all assemplies and find
-            // AppDomain.CurrentDomain.GetAssemblies().Select(a => a.FullName).ToList().ForEach(name => Console.WriteLine(name));
-            Assembly ass = typeof(OmegaServiceRegistration).Assembly;
-            // ass.GetReferencedAssemblies().Select(a => a.FullName).ToList().ForEach(name => Console.WriteLine(name));
-            var assemblies = ass.GetReferencedAssemblies()
-                .Where(a => !a.FullName.StartsWith("Microsoft.") && !a.FullName.StartsWith("System."))
+
+            var omegaServiceAssemblies = typeof(OmegaServiceRegistration).Assembly.GetReferencedAssemblies()
+                .Where(a => a.Name.StartsWith("OmegaService."))
                 .ToList();
-            assemblies.ForEach(a => Console.WriteLine(a.FullName));
+            omegaServiceAssemblies.ForEach(a => Console.WriteLine(a.Name));
+
+            foreach (var assemblyName in omegaServiceAssemblies)
+            {
+                var omegaServiceTypes = Assembly.Load(assemblyName).GetTypes()
+                    .Where(t => t.IsClass && !t.IsAbstract && t.IsSubclassOf(typeof(ProjectOmegaService)))
+                    .ToList();
+                _logger.LogInformation($"Number of ProjectOmegaService types in assembly {assemblyName.Name}: {omegaServiceTypes.Count}");
+
+                foreach (var omegaServiceType in omegaServiceTypes)
+                {
+                    services.Add((ProjectOmegaService)Activator.CreateInstance(omegaServiceType));
+                }
+            }
 
             foreach (var service in services)
             {
-                
+                _logger.LogInformation("Calling InitService for type " + service.GetType().Name);
+                service.InitService();
             }
+            _logger.LogInformation("\n-----------------------------\n");
         }
     }
 }

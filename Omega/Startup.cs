@@ -8,8 +8,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Omega.Logic;
-using Weather;
-using Weather.Interface;
+using OmegaService.Weather;
+using OmegaService.Weather.Interface;
 
 namespace Omega
 {

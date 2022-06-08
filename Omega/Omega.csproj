@@ -22,7 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\OmegaLibs\RandomStuff\RandomStuff.csproj" />
-    <ProjectReference Include="..\OmegaServices\Weather\Weather.csproj" />
+    <ProjectReference Include="..\OmegaServices\OmegaService.Weather\OmegaService.Weather.csproj" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

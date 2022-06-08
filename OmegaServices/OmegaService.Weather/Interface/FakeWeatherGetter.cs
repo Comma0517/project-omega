@@ -1,4 +1,4 @@
-namespace Weather.Interface
+namespace OmegaService.Weather.Interface
 {
     public interface IFakeWeatherGetter
     {

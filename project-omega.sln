@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OmegaPlumbing", "OmegaLibs\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OmegaServices", "OmegaServices", "{1182D1A1-DAC4-445B-A116-8198ABE303C4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weather", "OmegaServices\Weather\Weather.csproj", "{EB39F736-3863-451B-B03A-3DD0CA383B95}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OmegaService.Weather", "OmegaServices\OmegaService.Weather\OmegaService.Weather.csproj", "{EB39F736-3863-451B-B03A-3DD0CA383B95}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

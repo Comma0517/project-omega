@@ -1,9 +1,9 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
 using RandomStuff;
-using Weather.Interface;
+using OmegaService.Weather.Interface;
 
-namespace Weather
+namespace OmegaService.Weather
 {
     public class FakeWeatherGetter : IFakeWeatherGetter
     {

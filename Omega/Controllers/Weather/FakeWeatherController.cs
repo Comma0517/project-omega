@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Weather.Interface;
+using OmegaService.Weather.Interface;
 
 namespace Omega.Controllers.Weather
 {
