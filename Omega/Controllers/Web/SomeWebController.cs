@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Net.Http;
 
-namespace Omega.Controllers
+namespace Omega.Controllers.Web
 {
     [ApiController]
     [Route("api/[controller]")]

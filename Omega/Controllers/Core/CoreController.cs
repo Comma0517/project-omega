@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 using System.Net.Http;
 using RandomStuff;
 
-namespace Omega.Controllers
+namespace Omega.Controllers.Core
 {
     [ApiController]
     [Route("api/[controller]")]

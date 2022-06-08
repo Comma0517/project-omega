@@ -29,8 +29,6 @@ namespace Omega
 
             services.AddControllersWithViews();
 
-            //services.AddControllers()
-            
             // In production, the React files will be served from this directory
             if (EnvHelper.IS_WEB)
             {
