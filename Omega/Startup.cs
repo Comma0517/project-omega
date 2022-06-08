@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Omega.Logic;
+using Weather;
+using Weather.Interface;
 
 namespace Omega
 {
@@ -22,12 +25,13 @@ namespace Omega
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var root = Directory.GetCurrentDirectory();
-            var dotenv = Path.Combine(root, ".env");
-            DotEnv.Load(dotenv);
+            SetupDotEnv();
             EnvHelper.Init();
+            new OmegaServiceRegistration().InitServices();
 
             services.AddControllersWithViews();
+
+            services.AddScoped<IFakeWeatherGetter, FakeWeatherGetter>();
 
             // In production, the React files will be served from this directory
             if (EnvHelper.IS_WEB)
@@ -88,6 +92,13 @@ namespace Omega
                     }
                 });
             }
+        }
+
+        private void SetupDotEnv()
+        {
+            var root = Directory.GetCurrentDirectory();
+            var dotenv = Path.Combine(root, ".env");
+            DotEnv.Load(dotenv);
         }
     }
 }

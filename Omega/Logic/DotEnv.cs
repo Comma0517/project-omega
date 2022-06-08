@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace Omega
+namespace Omega.Logic
 {
     static class DotEnv
     {

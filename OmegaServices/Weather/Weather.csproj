@@ -7,5 +7,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\OmegaLibs\RandomStuff\RandomStuff.csproj" />
+    <ProjectReference Include="..\..\OmegaLibs\OmegaPlumbing\OmegaPlumbing.csproj" />
   </ItemGroup>
 </Project>

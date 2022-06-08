@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Net.Http;
+using Omega.Logic;
 
 // This came with the default .net core template. Delete eventually.
 namespace Omega.Controllers.Web

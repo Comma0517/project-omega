@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Weather;
+using Weather.Interface;
 
 namespace Omega.Controllers.Weather
 {
@@ -9,17 +9,18 @@ namespace Omega.Controllers.Weather
     public class FakeWeatherController : ControllerBase
     {
         private readonly ILogger<FakeWeatherController> _logger;
+        private readonly IFakeWeatherGetter _fakeWeatherGetter;
         
-        public FakeWeatherController(ILogger<FakeWeatherController> logger)
+        public FakeWeatherController(ILogger<FakeWeatherController> logger, IFakeWeatherGetter fakeWeatherGetter)
         {
             _logger = logger;
+            _fakeWeatherGetter = fakeWeatherGetter;
         }
         
         [HttpGet]
         public IActionResult GetFakeWeatherMessage()
         {
-            var weatherGetter = new FakeWeatherGetter();
-            return Ok(weatherGetter.GetRandomTempMessage());
+            return Ok(_fakeWeatherGetter.GetRandomTempMessage());
         }
     }
 }

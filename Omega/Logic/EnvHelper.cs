@@ -1,6 +1,6 @@
 using System;
 
-namespace Omega
+namespace Omega.Logic
 {
     static class EnvHelper
     {
