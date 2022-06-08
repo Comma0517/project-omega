@@ -23,6 +23,8 @@
   <ItemGroup>
     <ProjectReference Include="..\OmegaLibs\RandomStuff\RandomStuff.csproj" />
     <ProjectReference Include="..\OmegaServices\OmegaService.Weather\OmegaService.Weather.csproj" />
+    <ProjectReference Include="..\OmegaServices\OmegaService.Auth\OmegaService.Auth.csproj" />
+    <ProjectReference Include="..\OmegaLibs\SharedModel\SharedModel.csproj" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

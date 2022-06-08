@@ -33,7 +33,7 @@ namespace Omega.Controllers.Web
         [HttpGet]
         public async Task<IActionResult> GetStuff()
         {
-            _logger.LogInformation("SomeWebController default route called - will call into core service");
+            _logger.LogInformation("SomeWebEndpointController default route called - will call into core service");
             _logger.LogInformation($"CORE_URL_BASE: {CORE_URL_BASE}");
             _logger.LogInformation($"WEATHER_URL_BASE: {WEATHER_URL_BASE}");
             
