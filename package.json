@@ -13,6 +13,7 @@
     "build": "yarn gulp build",
     "bash:core": "yarn gulp dockerBash --image-name core",
     "bash:web": "yarn gulp dockerBash --image-name web",
+    "bash:weather": "yarn gulp dockerBash --image-name weather",
     "dockerBuild": "yarn gulp dockerBuild",
     "dockerUp": "yarn gulp dockerUp",
     "dockerDown": "yarn gulp dockerDown",
