@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace OmegaPlumbing
 {
@@ -7,6 +8,6 @@ namespace OmegaPlumbing
         // Setup DB connection
         // Setup Dependency Injection
         // etc
-        public abstract void InitService();
+        public abstract void InitService(IServiceCollection services);
     }
 }

@@ -27,11 +27,9 @@ namespace Omega
         {
             SetupDotEnv();
             EnvHelper.Init();
-            new OmegaServiceRegistration().InitServices();
+            new OmegaServiceRegistration().InitOmegaServices(services);
 
             services.AddControllersWithViews();
-
-            services.AddScoped<IFakeWeatherGetter, FakeWeatherGetter>();
 
             // In production, the React files will be served from this directory
             if (EnvHelper.IS_WEB)

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using OmegaPlumbing;
 using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Omega.Logic
 {
@@ -18,10 +19,10 @@ namespace Omega.Logic
             _logger = loggerFactory.CreateLogger<OmegaServiceRegistration>();
         }
 
-        public void InitServices()
+        public void InitOmegaServices(IServiceCollection appServices)
         {
             _logger.LogInformation("\n-----------------------------\nRegistering Omega Services...\n");
-            var services = new List<ProjectOmegaService>();
+            var omegaServices = new List<ProjectOmegaService>();
 
             var omegaServiceAssemblies = typeof(OmegaServiceRegistration).Assembly.GetReferencedAssemblies()
                 .Where(a => a.Name.StartsWith("OmegaService."))
@@ -37,14 +38,14 @@ namespace Omega.Logic
 
                 foreach (var omegaServiceType in omegaServiceTypes)
                 {
-                    services.Add((ProjectOmegaService)Activator.CreateInstance(omegaServiceType));
+                    omegaServices.Add((ProjectOmegaService)Activator.CreateInstance(omegaServiceType));
                 }
             }
 
-            foreach (var service in services)
+            foreach (var service in omegaServices)
             {
                 _logger.LogInformation("Calling InitService for type " + service.GetType().Name);
-                service.InitService();
+                service.InitService(appServices);
             }
             _logger.LogInformation("\n-----------------------------\n");
         }
