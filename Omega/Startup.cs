@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -21,9 +22,11 @@ namespace Omega
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            SetupDotEnv();
-            EnvHelper.Init();
-            _omegaServiceRegistration.LoadOmegaServices(services, EnvHelper.SERVICE_KEY);
+            // TODO: Delete me
+            // SetupDotEnv();
+            // EnvHelper.Init();
+
+            _omegaServiceRegistration.LoadOmegaServices(services, Environment.GetEnvironmentVariable("SERVICE_KEY"));
             
             services.AddControllers(); // We're letting the react app handle all views, so this is probably all we need.
         }
@@ -44,6 +47,7 @@ namespace Omega
             _omegaServiceRegistration.ConfigureOmegaServices(app, env);
         }
 
+        // TODO: move me to environment settings
         private void SetupDotEnv()
         {
             var root = Directory.GetCurrentDirectory();
