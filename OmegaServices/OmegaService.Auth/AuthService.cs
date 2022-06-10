@@ -9,12 +9,11 @@ namespace OmegaService.Auth
 {
     public class AuthService : ProjectOmegaService
     {
-        public override void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public override void ConfigureServices(IServiceCollection services, ILogger logger)
         {
-            throw new NotImplementedException();
         }
 
-        public override void ConfigureServices(IServiceCollection services, ILogger logger)
+        public override void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
         }
     }

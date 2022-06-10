@@ -7,7 +7,7 @@
   "private": true,
   "scripts": {
     "installAll": "yarn install && yarn --cwd Omega/client-app/ install",
-    "client": "yarn --cwd Omega/client-app/ start",
+    "client": "yarn --cwd OmegaServices/OmegaService.Web/client-app/ start",
     "server": "dotnet watch -p Omega run",
     "both": "concurrently \"yarn run client\" \"yarn run server\" --kill-others",
     "build": "yarn gulp build",

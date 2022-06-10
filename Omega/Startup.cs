@@ -1,16 +1,16 @@
 using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Omega.Logic;
 
 namespace Omega
 {
     public class Startup
     {
+        private OmegaServiceRegistration _omegaServiceRegistration = new OmegaServiceRegistration();
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -23,48 +23,15 @@ namespace Omega
         {
             SetupDotEnv();
             EnvHelper.Init();
-            new OmegaServiceRegistration().LoadOmegaServices(services);
+            _omegaServiceRegistration.LoadOmegaServices(services);
             
-            // services.AddControllersWithViews();
             services.AddControllers(); // We're letting the react app handle all views, so this is probably all we need.
-            
-            // In production, the React files will be served from this directory
-            if (EnvHelper.IS_WEB)
-            {
-                services.AddSpaStaticFiles(configuration =>
-                {
-                    configuration.RootPath = "client-app/build";
-                });
-            }
         }
         
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            // Console.WriteLine($"IsDevelopment: {env.IsDevelopment()}");
-            // Console.WriteLine($"TEST_VAR: {Environment.GetEnvironmentVariable("TEST_VAR") ?? "null"}");
-            // Console.WriteLine($"DOT_ENV_TEST_VAR: {Environment.GetEnvironmentVariable("DOT_ENV_TEST_VAR") ?? "null"}");
-            // Console.WriteLine($"CORE_HOST: {EnvHelper.CORE_HOST}");
-            // Console.WriteLine($"CORE_PORT: {EnvHelper.CORE_PORT}");
-            // Console.WriteLine($"IS_WEB: {EnvHelper.IS_WEB}");
-
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                // app.UseHsts();
-            }
-
-            // app.UseHttpsRedirection();
-            app.UseStaticFiles();
-            if (EnvHelper.IS_WEB)
-            {
-                app.UseSpaStaticFiles();
-            }
+            _omegaServiceRegistration.ConfigureOmegaServices(app, env);
 
             app.UseRouting();
 
@@ -74,19 +41,6 @@ namespace Omega
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
             });
-
-            if (!env.IsDevelopment() && EnvHelper.IS_WEB)
-            {
-                app.UseSpa(spa =>
-                {
-                    spa.Options.SourcePath = "client-app";
-
-                    if (env.IsDevelopment())
-                    {
-                        spa.UseReactDevelopmentServer(npmScript: "start");
-                    }
-                });
-            }
         }
 
         private void SetupDotEnv()

@@ -3,5 +3,6 @@
 **/node_modules
 **/obj
 **/bin
+**/.env
 docker/built_server_app
 docker/built_client_app

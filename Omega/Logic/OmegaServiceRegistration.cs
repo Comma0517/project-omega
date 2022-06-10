@@ -6,6 +6,8 @@ using OmegaPlumbing;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using System.IO;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Omega.Logic
 {
@@ -13,6 +15,7 @@ namespace Omega.Logic
     {
         private readonly ILogger _logger;
         private static readonly string OMEGA_SERVICE_PREFIX = "OmegaService";
+        private static List<ProjectOmegaService> _omegaServices = new List<ProjectOmegaService>();
 
         public OmegaServiceRegistration()
         {
@@ -25,14 +28,22 @@ namespace Omega.Logic
         {
             _logger.LogInformation("\n-----------------------------\nRegistering Omega Services...\n");
 
-            var omegaServices = LoadOmegaServices();
+            _omegaServices = LoadOmegaServices();
 
-            foreach (var service in omegaServices)
+            foreach (var service in _omegaServices)
             {
                 _logger.LogInformation("Calling InitService for type " + service.GetType().Name);
                 service.ConfigureServices(appServices, _logger);
             }
             _logger.LogInformation("\n-----------------------------\n");
+        }
+
+        public void ConfigureOmegaServices(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            foreach (var omegaService in _omegaServices)
+            {
+                omegaService.Configure(app, env);
+            }
         }
 
         // Note that we have to manually load assemblies that aren't explicitly used (we're only accessing these via reflection).

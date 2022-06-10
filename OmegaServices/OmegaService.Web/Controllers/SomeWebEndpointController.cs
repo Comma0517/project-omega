@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Net.Http;
-using Omega.Logic;
+using OmegaService.Web.Logic;
 
 namespace Omega.Controllers.Web
 {
@@ -26,8 +26,11 @@ namespace Omega.Controllers.Web
         public SomeWebEndpointController(ILogger<SomeWebEndpointController> logger)
         {
             _logger = logger;
-            CORE_URL_BASE = $"http://{EnvHelper.CORE_HOST}:{EnvHelper.CORE_PORT}/api/";
-            WEATHER_URL_BASE = $"http://{EnvHelper.WEATHER_HOST}:{EnvHelper.WEATHER_PORT}/api/";
+            // TODO: utilize new IEnvironmentSettings once it exists
+            // CORE_URL_BASE = $"http://{EnvHelper.CORE_HOST}:{EnvHelper.CORE_PORT}/api/";
+            // WEATHER_URL_BASE = $"http://{EnvHelper.WEATHER_HOST}:{EnvHelper.WEATHER_PORT}/api/";
+            CORE_URL_BASE = $"http://localhost:5000/api/";
+            WEATHER_URL_BASE = $"http://localhost:5000/api/";
         }
 
         [HttpGet]

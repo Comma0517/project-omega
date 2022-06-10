@@ -34,7 +34,7 @@ async function dotnetPublish() {
 }
 
 async function yarnBuild() {
-  const args = ['--cwd', 'Omega/client-app', 'build']
+  const args = ['--cwd', 'OmegaServices/OmegaService.Web/client-app', 'build']
   return waitForProcess(spawn('yarn', args, spawnOptions))
 }
 
@@ -70,7 +70,7 @@ async function copyPublishedToDockerDir() {
 
   // For excluding a dir, see https://github.com/gulpjs/gulp/issues/165#issuecomment-32611271
   src(['Omega/bin/Release/net5.0/publish/**/*', '!**/client-app', '!**/client-app/**']).pipe(dest(dockerBuiltServerPath))
-  src('Omega/client-app/build/**/*').pipe(dest(dockerBuiltClientPath))
+  src('OmegaServices/OmegaService.Web/client-app/build/**/*').pipe(dest(dockerBuiltClientPath))
 }
 
 const build = parallel(dotnetPublish, yarnBuild)
