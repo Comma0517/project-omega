@@ -7,6 +7,7 @@
     <IsPackable>false</IsPackable>
     <SpaRoot>client-app\</SpaRoot>
     <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
+    <NoWarn>8034</NoWarn> <!-- Hides the warning about loading multiple Analyzer assemblies -->
   </PropertyGroup>
 
   <ItemGroup>

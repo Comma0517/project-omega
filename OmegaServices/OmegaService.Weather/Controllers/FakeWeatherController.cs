@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using OmegaService.Weather.Interface;
 
-namespace Omega.Controllers.Weather
+namespace OmegaService.Weather.Controllers
 {
     [ApiController]
     [Route("api/Weather/[controller]")]

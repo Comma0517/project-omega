@@ -1,15 +1,11 @@
-using System;
 using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Omega.Logic;
-using OmegaService.Weather;
-using OmegaService.Weather.Interface;
 
 namespace Omega
 {
@@ -27,10 +23,11 @@ namespace Omega
         {
             SetupDotEnv();
             EnvHelper.Init();
-            new OmegaServiceRegistration().InitOmegaServices(services);
-
-            services.AddControllersWithViews();
-
+            new OmegaServiceRegistration().LoadOmegaServices(services);
+            
+            // services.AddControllersWithViews();
+            services.AddControllers(); // We're letting the react app handle all views, so this is probably all we need.
+            
             // In production, the React files will be served from this directory
             if (EnvHelper.IS_WEB)
             {
@@ -40,16 +37,16 @@ namespace Omega
                 });
             }
         }
-
+        
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            Console.WriteLine($"IsDevelopment: {env.IsDevelopment()}");
-            Console.WriteLine($"TEST_VAR: {Environment.GetEnvironmentVariable("TEST_VAR") ?? "null"}");
-            Console.WriteLine($"DOT_ENV_TEST_VAR: {Environment.GetEnvironmentVariable("DOT_ENV_TEST_VAR") ?? "null"}");
-            Console.WriteLine($"CORE_HOST: {EnvHelper.CORE_HOST}");
-            Console.WriteLine($"CORE_PORT: {EnvHelper.CORE_PORT}");
-            Console.WriteLine($"IS_WEB: {EnvHelper.IS_WEB}");
+            // Console.WriteLine($"IsDevelopment: {env.IsDevelopment()}");
+            // Console.WriteLine($"TEST_VAR: {Environment.GetEnvironmentVariable("TEST_VAR") ?? "null"}");
+            // Console.WriteLine($"DOT_ENV_TEST_VAR: {Environment.GetEnvironmentVariable("DOT_ENV_TEST_VAR") ?? "null"}");
+            // Console.WriteLine($"CORE_HOST: {EnvHelper.CORE_HOST}");
+            // Console.WriteLine($"CORE_PORT: {EnvHelper.CORE_PORT}");
+            // Console.WriteLine($"IS_WEB: {EnvHelper.IS_WEB}");
 
             if (env.IsDevelopment())
             {

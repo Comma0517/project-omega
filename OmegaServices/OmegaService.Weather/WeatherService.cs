@@ -1,7 +1,9 @@
-using System;
 using Microsoft.Extensions.DependencyInjection;
 using OmegaPlumbing;
 using OmegaService.Weather.Interface;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace OmegaService.Weather
 {
@@ -10,10 +12,14 @@ namespace OmegaService.Weather
         public WeatherService()
         {
         }
-        
-        public override void InitService(IServiceCollection services)
+
+        public override void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            Console.WriteLine("You dawg, initializing Weather P.O.S.");
+        }
+
+        public override void ConfigureServices(IServiceCollection services, ILogger logger)
+        {
+            logger.LogInformation("Yo dawg, initializing Weather P.O.S.");
             services.AddScoped<IFakeWeatherGetter, FakeWeatherGetter>();
         }
     }

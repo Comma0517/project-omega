@@ -5,12 +5,14 @@ using Microsoft.Extensions.Logging;
 using OmegaPlumbing;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
+using System.IO;
 
 namespace Omega.Logic
 {
     public class OmegaServiceRegistration
     {
         private readonly ILogger _logger;
+        private static readonly string OMEGA_SERVICE_PREFIX = "OmegaService";
 
         public OmegaServiceRegistration()
         {
@@ -19,35 +21,48 @@ namespace Omega.Logic
             _logger = loggerFactory.CreateLogger<OmegaServiceRegistration>();
         }
 
-        public void InitOmegaServices(IServiceCollection appServices)
+        public void LoadOmegaServices(IServiceCollection appServices)
         {
             _logger.LogInformation("\n-----------------------------\nRegistering Omega Services...\n");
-            var omegaServices = new List<ProjectOmegaService>();
 
-            var omegaServiceAssemblies = typeof(OmegaServiceRegistration).Assembly.GetReferencedAssemblies()
-                .Where(a => a.Name.StartsWith("OmegaService."))
-                .ToList();
-            omegaServiceAssemblies.ForEach(a => Console.WriteLine(a.Name));
-
-            foreach (var assemblyName in omegaServiceAssemblies)
-            {
-                var omegaServiceTypes = Assembly.Load(assemblyName).GetTypes()
-                    .Where(t => t.IsClass && !t.IsAbstract && t.IsSubclassOf(typeof(ProjectOmegaService)))
-                    .ToList();
-                _logger.LogInformation($"Number of ProjectOmegaService types in assembly {assemblyName.Name}: {omegaServiceTypes.Count}");
-
-                foreach (var omegaServiceType in omegaServiceTypes)
-                {
-                    omegaServices.Add((ProjectOmegaService)Activator.CreateInstance(omegaServiceType));
-                }
-            }
+            var omegaServices = LoadOmegaServices();
 
             foreach (var service in omegaServices)
             {
                 _logger.LogInformation("Calling InitService for type " + service.GetType().Name);
-                service.InitService(appServices);
+                service.ConfigureServices(appServices, _logger);
             }
             _logger.LogInformation("\n-----------------------------\n");
+        }
+
+        // Note that we have to manually load assemblies that aren't explicitly used (we're only accessing these via reflection).
+        //
+        // May need to add functionality to dynamically load any assemblies each OmegaService references after manually loading
+        // See https://dotnetstories.com/blog/Dynamically-pre-load-assemblies-in-a-ASPNET-Core-or-any-C-project-en-7155735300
+        private List<ProjectOmegaService> LoadOmegaServices()
+        {
+            var omegaServices = new List<ProjectOmegaService>();
+
+            var executingDir = AppDomain.CurrentDomain.BaseDirectory;
+            var searchPattern = $"{OMEGA_SERVICE_PREFIX}*.dll";
+            string[] filePaths = Directory.GetFiles(executingDir, searchPattern, SearchOption.TopDirectoryOnly);
+
+
+            filePaths.ToList().ForEach(filePath =>
+            {
+                string omegaServiceAssemblyName = Path.GetFileName(filePath).Replace(".dll", "");
+                _logger.LogInformation("Found OmegaService " + omegaServiceAssemblyName);
+                Assembly assembly = Assembly.Load(omegaServiceAssemblyName);
+                var omegaServiceTypes = assembly.GetTypes()
+                    .Where(t => t.IsClass && !t.IsAbstract && t.IsSubclassOf(typeof(ProjectOmegaService)))
+                    .ToList();
+                foreach (var omegaServiceType in omegaServiceTypes)
+                {
+                    omegaServices.Add((ProjectOmegaService)Activator.CreateInstance(omegaServiceType));
+                }
+            });
+
+            return omegaServices;
         }
     }
 }
