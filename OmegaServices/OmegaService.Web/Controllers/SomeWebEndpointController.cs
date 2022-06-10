@@ -22,15 +22,20 @@ namespace Omega.Controllers.Web
             ClientCertificateOptions = ClientCertificateOption.Manual,
             ServerCertificateCustomValidationCallback = (httpRequestMessage, cert, cetChain, policyErrors) => true
         });
-
+        
+        // TODO: utilize new IEnvironmentSettings once it exists
         public SomeWebEndpointController(ILogger<SomeWebEndpointController> logger)
         {
             _logger = logger;
-            // TODO: utilize new IEnvironmentSettings once it exists
+            
             // CORE_URL_BASE = $"http://{EnvHelper.CORE_HOST}:{EnvHelper.CORE_PORT}/api/";
             // WEATHER_URL_BASE = $"http://{EnvHelper.WEATHER_HOST}:{EnvHelper.WEATHER_PORT}/api/";
-            CORE_URL_BASE = $"http://localhost:5000/api/";
-            WEATHER_URL_BASE = $"http://localhost:5000/api/";
+            
+            // CORE_URL_BASE = $"http://localhost:5000/api/";
+            // WEATHER_URL_BASE = $"http://localhost:5000/api/";
+            
+            CORE_URL_BASE = $"http://{EnvHelper.GetString("CORE_HOST")}:{EnvHelper.CORE_PORT}/api/";
+            WEATHER_URL_BASE = $"http://{EnvHelper.GetString("WEATHER_HOST")}:{EnvHelper.WEATHER_PORT}/api/";
         }
 
         [HttpGet]

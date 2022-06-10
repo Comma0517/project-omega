@@ -23,7 +23,7 @@ namespace Omega
         {
             SetupDotEnv();
             EnvHelper.Init();
-            _omegaServiceRegistration.LoadOmegaServices(services);
+            _omegaServiceRegistration.LoadOmegaServices(services, EnvHelper.SERVICE_KEY);
             
             services.AddControllers(); // We're letting the react app handle all views, so this is probably all we need.
         }
@@ -31,16 +31,17 @@ namespace Omega
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            _omegaServiceRegistration.ConfigureOmegaServices(app, env);
-
             app.UseRouting();
-
+            
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
             });
+            
+            // Note that order matters here. OmegaService.Web registration of SPA resources fails if routing is not setup first.
+            _omegaServiceRegistration.ConfigureOmegaServices(app, env);
         }
 
         private void SetupDotEnv()

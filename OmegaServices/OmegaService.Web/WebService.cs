@@ -7,6 +7,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using OmegaService.Web.Logic;
 using System;
+using System.IO;
 
 namespace OmegaService.Web
 {
@@ -29,6 +30,11 @@ namespace OmegaService.Web
             app.UseStaticFiles();
 
             app.UseSpaStaticFiles();
+
+            app.UseSpa(spa =>
+            {
+                spa.Options.SourcePath = "client-app";
+            });
 
             // if (env.IsDevelopment())
             // {

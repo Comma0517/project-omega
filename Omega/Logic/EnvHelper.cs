@@ -4,7 +4,7 @@ namespace Omega.Logic
 {
     static class EnvHelper
     {
-        public static bool IS_WEB;
+        public static string SERVICE_KEY;
         public static string CORE_HOST;
         public static string CORE_PORT;
         public static string WEATHER_HOST;
@@ -12,7 +12,7 @@ namespace Omega.Logic
         
         public static void Init()
         {
-            IS_WEB = GetBool("IS_WEB");
+            SERVICE_KEY = GetString("SERVICE_KEY");
             CORE_HOST = GetString("CORE_HOST") ?? "localhost";
             CORE_PORT = GetString("CORE_PORT") ?? "5000";
             WEATHER_HOST = GetString("WEATHER_HOST") ?? "localhost";
