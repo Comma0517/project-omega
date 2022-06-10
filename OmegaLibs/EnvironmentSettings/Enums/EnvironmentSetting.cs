@@ -1,4 +1,6 @@
-namespace EnvironmentSettings
+using EnvironmentSettings.Attributes;
+
+namespace EnvironmentSettings.Enums
 {
     public enum EnvironmentSetting
     {

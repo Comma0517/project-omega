@@ -1,4 +1,4 @@
-namespace EnvironmentSettings
+namespace EnvironmentSettings.Enums
 {
     public enum DefaultSettingForEnvironment
     {

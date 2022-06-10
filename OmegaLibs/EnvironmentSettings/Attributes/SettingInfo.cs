@@ -1,4 +1,6 @@
-namespace EnvironmentSettings
+using EnvironmentSettings.Enums;
+
+namespace EnvironmentSettings.Attributes
 {
     [System.AttributeUsage(System.AttributeTargets.Field)]
     public class SettingInfo : System.Attribute
