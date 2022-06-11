@@ -1,9 +1,10 @@
+using System;
 using EnvironmentSettings.Enums;
 
 namespace EnvironmentSettings.Attributes
 {
-    [System.AttributeUsage(System.AttributeTargets.Field)]
-    public class SettingInfo : System.Attribute
+    [AttributeUsage(AttributeTargets.Field)]
+    public class SettingInfo : Attribute
     {
         public string DefaultValue { get; init; }
         public SettingType SettingType { get; init; }
@@ -11,9 +12,9 @@ namespace EnvironmentSettings.Attributes
         public bool ShouldLogValue { get; init; }
 
         public SettingInfo(string defaultValue = "",
-                           SettingType settingType = SettingType.ENVIRONMENT_VARIABLE,
-                           DefaultSettingForEnvironment defaultForEnvironment = DefaultSettingForEnvironment.ALL_ENVIRONMENTS,
-                           bool shouldLogValue = false)
+            SettingType settingType = SettingType.EnvironmentVariable,
+            DefaultSettingForEnvironment defaultForEnvironment = DefaultSettingForEnvironment.AllEnvironments,
+            bool shouldLogValue = false)
         {
             DefaultValue = defaultValue;
             SettingType = settingType;

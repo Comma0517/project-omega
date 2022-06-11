@@ -6,6 +6,7 @@ using OmegaPlumbing;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using System.IO;
+using EnvironmentSettings.Interface;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 
@@ -24,7 +25,7 @@ namespace Omega.Logic
             _logger = loggerFactory.CreateLogger<OmegaServiceRegistration>();
         }
 
-        public void LoadOmegaServices(IServiceCollection appServices, string serviceKey)
+        public void LoadOmegaServices(IServiceCollection appServices, string serviceKey, IEnvSettings envSettings)
         {
             _logger.LogInformation("\n-----------------------------\nRegistering Omega Services...\n");
 
@@ -33,7 +34,7 @@ namespace Omega.Logic
             foreach (var service in _omegaServices)
             {
                 _logger.LogInformation("Calling InitService for type " + service.GetType().Name);
-                service.ConfigureServices(appServices, _logger);
+                service.ConfigureServices(appServices, _logger, envSettings);
             }
             _logger.LogInformation("\n-----------------------------\n");
         }

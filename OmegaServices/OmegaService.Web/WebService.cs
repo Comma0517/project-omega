@@ -1,40 +1,29 @@
+using System;
+using EnvironmentSettings.Interface;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using OmegaPlumbing;
-using Microsoft.Extensions.Hosting;
-using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
-using OmegaService.Web.Logic;
-using System;
-using System.IO;
 
 namespace OmegaService.Web
 {
     public class WebService : ProjectOmegaService
     {
-        public override void ConfigureServices(IServiceCollection services, ILogger logger)
+        public override void ConfigureServices(IServiceCollection services, ILogger logger, IEnvSettings envSettings)
         {
-            services.AddSpaStaticFiles(configuration =>
-            {
-                configuration.RootPath = "client-app/build";
-            });
+            envSettings.AddSettings<WebEnvSettings>();
+            logger.LogInformation(envSettings.GetAllAsSafeLogString());
+            services.AddSpaStaticFiles(configuration => { configuration.RootPath = "client-app/build"; });
         }
 
         public override void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            Log("=========");
-            Log("CORE_HOST: " + EnvHelper.CORE_HOST);
-            Log("=========");
-
             app.UseStaticFiles();
 
             app.UseSpaStaticFiles();
 
-            app.UseSpa(spa =>
-            {
-                spa.Options.SourcePath = "client-app";
-            });
+            app.UseSpa(spa => { spa.Options.SourcePath = "client-app"; });
 
             // if (env.IsDevelopment())
             // {

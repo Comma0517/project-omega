@@ -2,7 +2,7 @@ namespace EnvironmentSettings.Enums
 {
     public enum SettingType
     {
-        ENVIRONMENT_VARIABLE,
-        SECRET
+        EnvironmentVariable,
+        Secret // Functionality coming in a future commit
     }
 }

@@ -1,5 +1,7 @@
 using System;
 using System.IO;
+using EnvironmentSettings.Interface;
+using EnvironmentSettings.Logic;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -10,7 +12,7 @@ namespace Omega
 {
     public class Startup
     {
-        private OmegaServiceRegistration _omegaServiceRegistration = new OmegaServiceRegistration();
+        private readonly OmegaServiceRegistration _omegaServiceRegistration = new OmegaServiceRegistration();
 
         public Startup(IConfiguration configuration)
         {
@@ -22,11 +24,12 @@ namespace Omega
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // TODO: Delete me
-            // SetupDotEnv();
-            // EnvHelper.Init();
+            SetupDotEnv();
+            EnvHelper.Init();
+            var envSettings = new EnvSettings(new EnvironmentVariableProvider());
+            services.AddSingleton<IEnvSettings>(envSettings);
 
-            _omegaServiceRegistration.LoadOmegaServices(services, Environment.GetEnvironmentVariable("SERVICE_KEY"));
+            _omegaServiceRegistration.LoadOmegaServices(services, Environment.GetEnvironmentVariable("SERVICE_KEY"), envSettings);
             
             services.AddControllers(); // We're letting the react app handle all views, so this is probably all we need.
         }
@@ -47,7 +50,6 @@ namespace Omega
             _omegaServiceRegistration.ConfigureOmegaServices(app, env);
         }
 
-        // TODO: move me to environment settings
         private void SetupDotEnv()
         {
             var root = Directory.GetCurrentDirectory();

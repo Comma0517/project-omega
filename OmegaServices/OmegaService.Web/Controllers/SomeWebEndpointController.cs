@@ -1,13 +1,11 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
+using EnvironmentSettings.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System.Net.Http;
-using OmegaService.Web.Logic;
 
-namespace Omega.Controllers.Web
+namespace OmegaService.Web.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -16,26 +14,20 @@ namespace Omega.Controllers.Web
         private readonly ILogger<SomeWebEndpointController> _logger;
         private readonly string CORE_URL_BASE;
         private readonly string WEATHER_URL_BASE;
-        private static Random random = new Random();
-        private static HttpClient httpClient = new HttpClient(new HttpClientHandler
+        private static Random _random = new Random();
+
+        private static readonly HttpClient _httpClient = new HttpClient(new HttpClientHandler
         {
             ClientCertificateOptions = ClientCertificateOption.Manual,
             ServerCertificateCustomValidationCallback = (httpRequestMessage, cert, cetChain, policyErrors) => true
         });
-        
-        // TODO: utilize new IEnvironmentSettings once it exists
-        public SomeWebEndpointController(ILogger<SomeWebEndpointController> logger)
+
+        public SomeWebEndpointController(ILogger<SomeWebEndpointController> logger, IEnvSettings envSettings)
         {
             _logger = logger;
-            
-            // CORE_URL_BASE = $"http://{EnvHelper.CORE_HOST}:{EnvHelper.CORE_PORT}/api/";
-            // WEATHER_URL_BASE = $"http://{EnvHelper.WEATHER_HOST}:{EnvHelper.WEATHER_PORT}/api/";
-            
-            // CORE_URL_BASE = $"http://localhost:5000/api/";
-            // WEATHER_URL_BASE = $"http://localhost:5000/api/";
-            
-            CORE_URL_BASE = $"http://{EnvHelper.GetString("CORE_HOST")}:{EnvHelper.CORE_PORT}/api/";
-            WEATHER_URL_BASE = $"http://{EnvHelper.GetString("WEATHER_HOST")}:{EnvHelper.WEATHER_PORT}/api/";
+
+            CORE_URL_BASE = $"http://{envSettings.GetString(WebEnvSettings.CORE_HOST)}:{envSettings.GetString(WebEnvSettings.CORE_PORT)}/api/";
+            WEATHER_URL_BASE = $"http://{envSettings.GetString(WebEnvSettings.WEATHER_HOST)}:{envSettings.GetString(WebEnvSettings.WEATHER_PORT)}/api/";
         }
 
         [HttpGet]
@@ -44,10 +36,10 @@ namespace Omega.Controllers.Web
             _logger.LogInformation("SomeWebEndpointController default route called - will call into core service");
             _logger.LogInformation($"CORE_URL_BASE: {CORE_URL_BASE}");
             _logger.LogInformation($"WEATHER_URL_BASE: {WEATHER_URL_BASE}");
-            
-            string coreResponseString = await httpClient.GetStringAsync($"{CORE_URL_BASE}Core/DummyCore");
-            
-            string weatherResponseString = await httpClient.GetStringAsync($"{WEATHER_URL_BASE}Weather/FakeWeather");
+
+            string coreResponseString = await _httpClient.GetStringAsync($"{CORE_URL_BASE}Core/DummyCore");
+
+            string weatherResponseString = await _httpClient.GetStringAsync($"{WEATHER_URL_BASE}Weather/FakeWeather");
 
             return new JsonResult(new
             {
