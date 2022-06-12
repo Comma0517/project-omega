@@ -26,9 +26,6 @@ namespace EnvironmentSettings.Logic
             var enumValues = Enum.GetValues(typeof(TEnum));
 
             bool isLocal = IsLocal();
-            Console.WriteLine("********************");
-            Console.WriteLine("isLocal: " + isLocal);
-            Console.WriteLine("********************");
 
             foreach (Enum enumVal in enumValues)
             {

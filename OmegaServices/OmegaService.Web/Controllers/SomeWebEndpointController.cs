@@ -12,11 +12,11 @@ namespace OmegaService.Web.Controllers
     public class SomeWebEndpointController : ControllerBase
     {
         private readonly ILogger<SomeWebEndpointController> _logger;
-        private readonly string CORE_URL_BASE;
-        private readonly string WEATHER_URL_BASE;
+        private readonly string _coreUrlBase;
+        private readonly string _weatherUrlBase;
         private static Random _random = new Random();
 
-        private static readonly HttpClient _httpClient = new HttpClient(new HttpClientHandler
+        private static readonly HttpClient HttpClient = new HttpClient(new HttpClientHandler
         {
             ClientCertificateOptions = ClientCertificateOption.Manual,
             ServerCertificateCustomValidationCallback = (httpRequestMessage, cert, cetChain, policyErrors) => true
@@ -26,20 +26,20 @@ namespace OmegaService.Web.Controllers
         {
             _logger = logger;
 
-            CORE_URL_BASE = $"http://{envSettings.GetString(WebEnvSettings.CORE_HOST)}:{envSettings.GetString(WebEnvSettings.CORE_PORT)}/api/";
-            WEATHER_URL_BASE = $"http://{envSettings.GetString(WebEnvSettings.WEATHER_HOST)}:{envSettings.GetString(WebEnvSettings.WEATHER_PORT)}/api/";
+            _coreUrlBase = $"http://{envSettings.GetString(WebEnvSettings.CORE_HOST)}:{envSettings.GetString(WebEnvSettings.CORE_PORT)}/api/";
+            _weatherUrlBase = $"http://{envSettings.GetString(WebEnvSettings.WEATHER_HOST)}:{envSettings.GetString(WebEnvSettings.WEATHER_PORT)}/api/";
         }
 
         [HttpGet]
         public async Task<IActionResult> GetStuff()
         {
             _logger.LogInformation("SomeWebEndpointController default route called - will call into core service");
-            _logger.LogInformation($"CORE_URL_BASE: {CORE_URL_BASE}");
-            _logger.LogInformation($"WEATHER_URL_BASE: {WEATHER_URL_BASE}");
+            _logger.LogInformation($"CORE_URL_BASE: {_coreUrlBase}");
+            _logger.LogInformation($"WEATHER_URL_BASE: {_weatherUrlBase}");
 
-            string coreResponseString = await _httpClient.GetStringAsync($"{CORE_URL_BASE}Core/DummyCore");
+            var coreResponseString = await HttpClient.GetStringAsync($"{_coreUrlBase}Core/DummyCore");
 
-            string weatherResponseString = await _httpClient.GetStringAsync($"{WEATHER_URL_BASE}Weather/FakeWeather");
+            var weatherResponseString = await HttpClient.GetStringAsync($"{_weatherUrlBase}Weather/FakeWeather");
 
             return new JsonResult(new
             {
