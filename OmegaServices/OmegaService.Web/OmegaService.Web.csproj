@@ -13,6 +13,7 @@
     <ProjectReference Include="..\..\OmegaLibs\EnvironmentSettings\EnvironmentSettings.csproj" />
     <ProjectReference Include="..\..\OmegaLibs\OmegaPlumbing\OmegaPlumbing.csproj" />
     <ProjectReference Include="..\..\OmegaLibs\RandomStuff\RandomStuff.csproj" />
+    <ProjectReference Include="..\..\OmegaInterop\OmegaModel.Weather\OmegaModel.Weather.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.SpaServices" Version="5.0.0-preview.8.20414.8" />

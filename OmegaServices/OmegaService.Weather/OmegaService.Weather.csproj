@@ -3,10 +3,11 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\OmegaLibs\RandomStuff\RandomStuff.csproj"/>
-    <ProjectReference Include="..\..\OmegaLibs\OmegaPlumbing\OmegaPlumbing.csproj"/>
+    <ProjectReference Include="..\..\OmegaLibs\RandomStuff\RandomStuff.csproj" />
+    <ProjectReference Include="..\..\OmegaLibs\OmegaPlumbing\OmegaPlumbing.csproj" />
+    <ProjectReference Include="..\..\OmegaInterop\OmegaModel.Weather\OmegaModel.Weather.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <FrameworkReference Include="Microsoft.AspNetCore.App"/>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 </Project>

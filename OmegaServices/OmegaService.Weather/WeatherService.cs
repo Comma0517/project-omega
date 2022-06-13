@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using OmegaPlumbing;
 using OmegaService.Weather.Interface;
+using OmegaService.Weather.Logic;
 
 namespace OmegaService.Weather
 {
