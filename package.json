@@ -6,7 +6,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "installAll": "yarn install && yarn --cwd OmegaServices/OmegaService.Web/client-app/ install",
+    "installAll": "yarn install && yarn gulp initialInstall",
     "client": "yarn --cwd OmegaServices/OmegaService.Web/client-app/ start",
     "server": "dotnet watch -p Omega run",
     "both": "concurrently \"yarn run client\" \"yarn run server\" --kill-others",

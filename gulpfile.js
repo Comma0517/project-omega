@@ -3,7 +3,10 @@ const { spawn } = require('child_process')
 const argv = require('yargs').argv
 const path = require('path')
 const rimraf = require('rimraf')
+const fs = require('fs')
 const fsp = require('fs').promises
+
+const clientAppPath = 'OmegaServices/OmegaService.Web/client-app/'
 
 const spawnOptions = {
   shell: true,
@@ -26,6 +29,19 @@ function waitForProcess(childProcess) {
       reject(err)
     })
   })
+}
+
+async function yarnInstallClientApp() {
+  const args = ['--cwd', clientAppPath, 'install']
+  return waitForProcess(spawn('yarn', args, spawnOptions))
+}
+
+async function copyClientAppEnvFile() {
+  const envTemplatePath = `${clientAppPath}.env.template`
+  const envFilePath = `${clientAppPath}.env`
+  if (!fs.existsSync(envFilePath)) {
+    await fsp.copyFile(envTemplatePath, envFilePath)
+  }
 }
 
 async function dotnetPublish() {
@@ -74,6 +90,10 @@ async function copyPublishedToDockerDir() {
 }
 
 const build = parallel(dotnetPublish, yarnBuild)
+
+// Runs yarn install on client app while also copying client-app .env.template to .env.
+// Add other initial setup tasks here when they're needed.
+exports.initialInstall = parallel(yarnInstallClientApp, copyClientAppEnvFile)
 
 // Run dotnet publish and yarn build in parallel.
 exports.build = build
