@@ -65,8 +65,18 @@ Install pre-requisites:
 - Yarn
 - Docker
 
+Note that getting the latest version of docker running on windows may require some extra steps if you haven't done this in a while, like installing WSL 2 and refreshing your WSL distro. Follow any instructions on Docker's website.
+
 Steps:
 
 - Clone this repo.
-- From repo root, run `yarn run installAll`
-- From repo root
+- In a terminal from repo root, run `yarn run installAll`
+- Run the app in local development mode using one of these options:
+  - Option 1: in a terminal from repo root run `yarn run both` (this uses concurrently to run the commands from options 2)
+  - Option 2: use 2 separate terminals. In one terminal run `yarn run client` and in the other run `yarn run server`
+- Access http://localhost:3000
+
+To simulate production and microservices in docker:
+
+- In a terminal from repo root, run `yarn run dockerRecreateFull`
+- Access http://localhost:5000
