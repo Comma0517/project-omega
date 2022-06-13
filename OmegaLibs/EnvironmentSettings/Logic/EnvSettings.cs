@@ -221,8 +221,8 @@ namespace EnvironmentSettings.Logic
         {
             try
             {
-                var stringVal = _environmentVariableProvider.GetEnvironmentVariable(IS_LOCAL_KEY);
-                return !string.IsNullOrWhiteSpace(stringVal) && bool.Parse(stringVal);
+                var stringVal = _environmentVariableProvider.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+                return !string.IsNullOrWhiteSpace(stringVal) && stringVal.Trim() == "Development";
             }
             catch (Exception)
             {

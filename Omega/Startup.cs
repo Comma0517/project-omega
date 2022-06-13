@@ -37,6 +37,11 @@ namespace Omega
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            Console.WriteLine("**********");
+            Console.WriteLine("**********");
+            Console.WriteLine("ASPNETCORE_ENVIRONMENT: " + Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"));
+            Console.WriteLine("**********");
+            Console.WriteLine("**********");
             app.UseRouting();
             
             app.UseEndpoints(endpoints =>

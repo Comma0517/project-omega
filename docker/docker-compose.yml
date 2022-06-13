@@ -43,8 +43,6 @@ services:
       - omega
     environment:
       SERVICE_KEY: "Core"
-      TEST_VAR: "hello world"
-      DOT_ENV_TEST_VAR: "localhost:5003"
     expose:
       - 80
       - 443
@@ -58,8 +56,6 @@ services:
       - omega
     environment:
       SERVICE_KEY: "Weather"
-      TEST_VAR: "hello world"
-      DOT_ENV_TEST_VAR: "localhost:5003"
     expose:
       - 80
       - 443
