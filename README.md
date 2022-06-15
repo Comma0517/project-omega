@@ -12,7 +12,9 @@ The goal is to optimize the developer experience by being able to:
 
 ## Demo
 
-(TODO - video demo)
+Project Omega Proof of Concept - Microservices Monolith Hybrid
+
+[![Project Omega Proof of Concept - Microservices Monolith Hybrid](http://img.youtube.com/vi/j8iXRJS4T40/0.jpg)](https://www.youtube.com/watch?v=j8iXRJS4T40 "Project Omega Proof of Concept - Microservices Monolith Hybrid")
 
 ## Why
 
