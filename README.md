@@ -18,7 +18,7 @@ Project Omega Proof of Concept - Microservices Monolith Hybrid
 
 ## Why
 
-I want to prove that we don't have to sacrifice developer efficiency to get scalability. More discussion on pros and cons of monoliths and microservices here (TODO).
+I want to prove that we don't have to sacrifice developer efficiency to get scalability. More discussion on pros and cons of microservices and monoliths here: [Microservices and Monoliths](./docs/MicroservicesAndMonoliths.md).
 
 My impression is that many industry experts would have us believe that these are our main 3 options:
 
@@ -58,25 +58,25 @@ The tech stack is mostly irrelevant for the high level concept I'm attempting to
 
 Companies with large application are being pushed more and more towards microservices so that they can scale horizontally (among other reasons). So, to accomplish that we're looking at something like the following:
 
-![Microservices](/docs/ProjectOmega-MicroservicesHighLevel.png)
+![Microservices](./docs/ProjectOmega-MicroservicesHighLevel.png)
 
 Here is another version showing one way the horizontal scaling might be implemented:
 
-![Microservices](/docs/ProjectOmega-MicroserviceDetail.png)
+![Microservices](./docs/ProjectOmega-MicroserviceDetail.png)
 
 Once we go down this route, we end up with a real problem with local development. It really depends on what the product is like, how many developers there are, and who works on what, how often. That being said, a large portion of companies that choose microservices are going to end up in a situation where developers have to make some hard choices about how to do their day to day development. With project omega, the goal is to show that we can eliminate the overhead of running a service locally by combining them all into one application while running locally:
 
-![Microservices](/docs/ProjectOmega-DeveloperLaptop.png)
+![Microservices](./docs/ProjectOmega-DeveloperLaptop.png)
 
 Here is the folder structure:
 
-![Microservices](/docs/ProjectOmega-FolderStructure.png)
+![Microservices](./docs/ProjectOmega-FolderStructure.png)
 
 And here is what it would look like deployed as microservices:
 
-![Microservices](/docs/ProjectOmega-OmegaMicroservices.png)
+![Microservices](./docs/ProjectOmega-OmegaMicroservices.png)
 
-Each instance has a copy of all the code, but only runs initialization, services routes for and does worker processes for a specific microservice.
+Each instance has a copy of all the code but only runs initialization, service endpoint routes and worker processes for a specific microservice.
 
 This is why it's so simple to run the application locally as a monolith because we simply look for an environment variable called `SERVICE_KEY` or if it's not present, initialize all services.
 
