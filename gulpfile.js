@@ -89,6 +89,17 @@ async function copyPublishedToDockerDir() {
   src('OmegaServices/OmegaService.Web/client-app/build/**/*').pipe(dest(dockerBuiltClientPath))
 }
 
+async function dockerStandaloneBuild() {
+  const args = ['build', '-f', 'Dockerfile.standalone', '-t', 'omega_standalone:1.0', '.']
+  return waitForProcess(spawn('docker', args, dockerSpawnOptions))
+}
+
+async function dockerStandaloneRun() {
+  // Note that running docker as a gulp command disallows passing the -t command since that would try to configure the terminal
+  const args = ['run', '-i', '--rm', '-p', '5000:80', 'omega_standalone:1.0']
+  return waitForProcess(spawn('docker', args, dockerSpawnOptions))
+}
+
 const build = parallel(dotnetPublish, yarnBuild)
 
 // Runs yarn install on client app while also copying client-app .env.template to .env.
@@ -118,3 +129,7 @@ exports.dockerRecreate = series(dockerDown, dockerUp)
 
 // Good for testing app in docker after making source changes. Completely rebuilds the images before bringing containers up.
 exports.dockerRecreateFull = series(parallel(dockerDown, build), copyPublishedToDockerDir, dockerBuild, dockerUp)
+
+exports.dockerStandaloneBuild = dockerStandaloneBuild
+
+exports.dockerStandaloneRun = dockerStandaloneRun
