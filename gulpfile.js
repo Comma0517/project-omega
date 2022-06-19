@@ -60,7 +60,7 @@ async function dockerBash() {
 }
 
 async function dockerBuild() {
-  return waitForProcess(spawn('docker-compose', ['build'], dockerSpawnOptions))
+  return waitForProcess(spawn('docker-compose', ['build', '--no-cache'], dockerSpawnOptions))
 }
 
 async function dockerUp() {

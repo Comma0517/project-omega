@@ -10,4 +10,7 @@ COPY ./built_server_app/ app/
 
 WORKDIR /app
 
+EXPOSE 80
+EXPOSE 443
+
 ENTRYPOINT ["dotnet", "Omega.dll"]

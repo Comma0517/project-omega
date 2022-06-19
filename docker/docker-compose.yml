@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   omega_web:
-    image: omega:web
+    image: omega_web:1.0
     container_name: omega_web
     build:
       context: .
@@ -21,7 +21,7 @@ services:
       - "5000:80"
       - "5001:443"
   omega_auth:
-    image: omega:auth
+    image: omega_auth:1.0
     container_name: omega_auth
     build:
       context: .
@@ -34,7 +34,7 @@ services:
       - 80
       - 443
   omega_core:
-    image: omega:core
+    image: omega_core:1.0
     container_name: omega_core
     build:
       context: .
@@ -47,7 +47,7 @@ services:
       - 80
       - 443
   omega_weather:
-    image: omega:weather
+    image: omega_weather:1.0
     container_name: omega_weather
     build:
       context: .

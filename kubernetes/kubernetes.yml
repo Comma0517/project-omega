@@ -1,0 +1,149 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: omega-web
+  labels:
+    app: omega-web
+spec:
+  selector:
+    matchLabels:
+      app: omega-web
+  template:
+    metadata:
+      labels:
+        app: omega-web
+    spec:
+      containers:
+      - name: omega-web
+        image: omega_web:1.0
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Production"
+        - name: SERVICE_KEY
+          value: "Web"
+        - name: CORE_HOST
+          value: "omega-core"
+        - name: CORE_PORT
+          value: "80"
+        - name: WEATHER_HOST
+          value: "omega-weather"
+        - name: WEATHER_PORT
+          value: "80"
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: omega-core
+  labels:
+    app: omega-core
+spec:
+  selector:
+    matchLabels:
+      app: omega-core
+  template:
+    metadata:
+      labels:
+        app: omega-core
+    spec:
+      containers:
+      - name: omega-core
+        image: omega_core:1.0
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Production"
+        - name: SERVICE_KEY
+          value: "Core"
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: omega-weather
+  labels:
+    app: omega-weather
+spec:
+  selector:
+    matchLabels:
+      app: omega-weather
+  template:
+    metadata:
+      labels:
+        app: omega-weather
+    spec:
+      containers:
+      - name: omega-weather
+        image: omega_weather:1.0
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Production"
+        - name: SERVICE_KEY
+          value: "Weather"
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: omega-web
+  labels:
+    app: omega-web
+spec:
+  type: NodePort
+  selector:
+    app: omega-web
+  ports:
+  - port: 5000
+    targetPort: 80
+    nodePort: 30000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: omega-core
+  labels:
+    app: omega-core
+spec:
+  type: ClusterIP
+  selector:
+    app: omega-core
+  ports:
+  - port: 80
+    targetPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: omega-weather
+  labels:
+    app: omega-weather
+spec:
+  type: ClusterIP
+  selector:
+    app: omega-weather
+  ports:
+  - port: 80
+    targetPort: 80
