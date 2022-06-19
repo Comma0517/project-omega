@@ -16,6 +16,10 @@ Project Omega Proof of Concept - Microservices Monolith Hybrid
 
 [![Project Omega Proof of Concept - Microservices Monolith Hybrid](http://img.youtube.com/vi/j8iXRJS4T40/0.jpg)](https://www.youtube.com/watch?v=j8iXRJS4T40 "Project Omega Proof of Concept - Microservices Monolith Hybrid")
 
+Project Omega Demo - Kubernetes Microserves and Standalone Container Deployment
+
+[![Project Omega Demo - Kubernetes Microserves and Standalone Container Deployment](http://img.youtube.com/vi/j8iXRJS4T40/0.jpg)](https://youtu.be/GuuZKHbF8kk "Project Omega Demo - Kubernetes Microserves and Standalone Container Deployment")
+
 ## Why
 
 I want to prove that we don't have to sacrifice developer efficiency to get scalability. More discussion on pros and cons of microservices and monoliths here: [Microservices and Monoliths](./docs/MicroservicesAndMonoliths.md).
