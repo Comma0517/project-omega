@@ -18,7 +18,7 @@ Project Omega Proof of Concept - Microservices Monolith Hybrid
 
 Project Omega Demo - Kubernetes Microserves and Standalone Container Deployment
 
-[![Project Omega Demo - Kubernetes Microserves and Standalone Container Deployment](http://img.youtube.com/vi/j8iXRJS4T40/0.jpg)](https://youtu.be/GuuZKHbF8kk "Project Omega Demo - Kubernetes Microserves and Standalone Container Deployment")
+[![Project Omega Demo - Kubernetes Microserves and Standalone Container Deployment](http://img.youtube.com/vi/GuuZKHbF8kk/0.jpg)](https://youtu.be/GuuZKHbF8kk "Project Omega Demo - Kubernetes Microserves and Standalone Container Deployment")
 
 ## Why
 
