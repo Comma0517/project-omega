@@ -5,6 +5,7 @@ metadata:
   labels:
     app: omega-web
 spec:
+  replicas: 3
   selector:
     matchLabels:
       app: omega-web
@@ -46,6 +47,7 @@ metadata:
   labels:
     app: omega-core
 spec:
+  replicas: 2
   selector:
     matchLabels:
       app: omega-core
@@ -79,6 +81,7 @@ metadata:
   labels:
     app: omega-weather
 spec:
+  replicas: 2
   selector:
     matchLabels:
       app: omega-weather
