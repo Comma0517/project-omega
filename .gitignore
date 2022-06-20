@@ -7,3 +7,5 @@ project-omega.sln.DotSettings.user
 **/.env
 docker/built_server_app
 docker/built_client_app
+docker/mssql/data
+docker/mssql/log

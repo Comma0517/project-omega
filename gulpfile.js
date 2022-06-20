@@ -8,6 +8,10 @@ const fsp = require('fs').promises
 
 const clientAppPath = 'OmegaServices/OmegaService.Web/client-app/'
 
+// The project name option prevents warnings about orphaned containers
+const dockerProjectName = 'omega';
+const dockerDepsProjectName = 'omega_deps';
+
 const spawnOptions = {
   shell: true,
   cwd: __dirname,
@@ -60,19 +64,19 @@ async function dockerBash() {
 }
 
 async function dockerBuild() {
-  return waitForProcess(spawn('docker-compose', ['build', '--no-cache'], dockerSpawnOptions))
+  return waitForProcess(spawn('docker-compose', ['--project-name', dockerProjectName, 'build', '--no-cache'], dockerSpawnOptions))
 }
 
 async function dockerUp() {
-  return waitForProcess(spawn('docker-compose', ['up'], dockerSpawnOptions))
+  return waitForProcess(spawn('docker-compose', ['--project-name', dockerProjectName, 'up'], dockerSpawnOptions))
 }
 
 async function dockerDown() {
-  return waitForProcess(spawn('docker-compose', ['down'], dockerSpawnOptions))
+  return waitForProcess(spawn('docker-compose', ['--project-name', dockerProjectName, 'down'], dockerSpawnOptions))
 }
 
 async function dockerStop() {
-  return waitForProcess(spawn('docker-compose', ['stop'], dockerSpawnOptions))
+  return waitForProcess(spawn('docker-compose', ['--project-name', dockerProjectName, 'stop'], dockerSpawnOptions))
 }
 
 async function copyPublishedToDockerDir() {
@@ -98,6 +102,30 @@ async function dockerStandaloneRun() {
   // Note that running docker as a gulp command disallows passing the -t command since that would try to configure the terminal
   const args = ['run', '-i', '--rm', '-p', '5000:80', 'omega_standalone:1.0']
   return waitForProcess(spawn('docker', args, dockerSpawnOptions))
+}
+
+async function copyDockerEnvFile() {
+  const envTemplatePath = `./docker/.env.template`
+  const envFilePath = `./docker/.env`
+  if (!fs.existsSync(envFilePath)) {
+    await fsp.copyFile(envTemplatePath, envFilePath)
+  }
+}
+
+async function dockerDepsUp() {
+  return waitForProcess(spawn('docker-compose', ['--project-name', dockerDepsProjectName, '-f', 'docker-compose.deps.yml', 'up'], dockerSpawnOptions))
+}
+
+async function dockerDepsUpDetached() {
+  return waitForProcess(spawn('docker-compose', ['--project-name', dockerDepsProjectName, '-f', 'docker-compose.deps.yml', 'up', '-d'], dockerSpawnOptions))
+}
+
+async function dockerDepsDown() {
+  return waitForProcess(spawn('docker-compose', ['--project-name', dockerDepsProjectName, '-f', 'docker-compose.deps.yml', 'down'], dockerSpawnOptions))
+}
+
+async function dockerDepsStop() {
+  return waitForProcess(spawn('docker-compose', ['--project-name', dockerDepsProjectName, '-f', 'docker-compose.deps.yml', 'stop'], dockerSpawnOptions))
 }
 
 const build = parallel(dotnetPublish, yarnBuild)
@@ -131,5 +159,9 @@ exports.dockerRecreate = series(dockerDown, dockerUp)
 exports.dockerRecreateFull = series(parallel(dockerDown, build), copyPublishedToDockerDir, dockerBuild, dockerUp)
 
 exports.dockerStandaloneBuild = dockerStandaloneBuild
-
 exports.dockerStandaloneRun = dockerStandaloneRun
+
+exports.dockerDepsUp = series(copyDockerEnvFile, dockerDepsUp)
+exports.dockerDepsUpDetached = series(copyDockerEnvFile, dockerDepsUpDetached)
+exports.dockerDepsDown = dockerDepsDown
+exports.dockerDepsStop = dockerDepsStop

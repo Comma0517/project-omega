@@ -21,7 +21,11 @@
     "dockerRecreate": "yarn gulp dockerRecreate",
     "dockerRecreateFull": "yarn gulp dockerRecreateFull",
     "dockerStandaloneBuild": "yarn gulp dockerStandaloneBuild",
-    "dockerStandaloneRun": "yarn gulp dockerStandaloneRun"
+    "dockerStandaloneRun": "yarn gulp dockerStandaloneRun",
+    "dockerDepsUp": "yarn gulp dockerDepsUp",
+    "dockerDepsUpDetached": "yarn gulp dockerDepsUpDetached",
+    "dockerDepsDown": "yarn gulp dockerDepsDown",
+    "dockerDepsStop": "yarn gulp dockerDepsStop"
   },
   "devDependencies": {
     "@types/gulp": "^4.0.8",
