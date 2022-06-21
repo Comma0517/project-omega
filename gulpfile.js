@@ -8,7 +8,7 @@ const fsp = require('fs').promises
 
 const clientAppPath = 'OmegaServices/OmegaService.Web/client-app/'
 
-// The project name option prevents warnings about orphaned containers
+// The project name option prevents warnings about unrelated orphaned containers
 const dockerProjectName = 'omega';
 const dockerDepsProjectName = 'omega_deps';
 
@@ -19,6 +19,8 @@ const spawnOptions = {
 }
 const spawnOptionsWithInput = { ...spawnOptions, stdio: 'inherit' }
 const dockerSpawnOptions = { ...spawnOptions, cwd: path.resolve(__dirname, 'docker') }
+const migratorSpawnOptions = { ...spawnOptions, cwd: path.resolve(__dirname, 'OmegaLibs/Omega.DbMigrator/') }
+const migratorSpawnOptionsWithInput = { ...migratorSpawnOptions, stdio: 'inherit' }
 
 function waitForProcess(childProcess) {
   return new Promise((resolve, reject) => {
@@ -35,17 +37,21 @@ function waitForProcess(childProcess) {
   })
 }
 
+async function ensureEnvFile(dir) {
+  const envTemplatePath = `${dir}.env.template`
+  const envFilePath = `${dir}.env`
+  if (!fs.existsSync(envFilePath)) {
+    await fsp.copyFile(envTemplatePath, envFilePath)
+  }
+}
+
 async function yarnInstallClientApp() {
   const args = ['--cwd', clientAppPath, 'install']
   return waitForProcess(spawn('yarn', args, spawnOptions))
 }
 
-async function copyClientAppEnvFile() {
-  const envTemplatePath = `${clientAppPath}.env.template`
-  const envFilePath = `${clientAppPath}.env`
-  if (!fs.existsSync(envFilePath)) {
-    await fsp.copyFile(envTemplatePath, envFilePath)
-  }
+async function ensureClientAppEnvFile() {
+  return ensureEnvFile(clientAppPath)
 }
 
 async function dotnetPublish() {
@@ -105,11 +111,7 @@ async function dockerStandaloneRun() {
 }
 
 async function copyDockerEnvFile() {
-  const envTemplatePath = `./docker/.env.template`
-  const envFilePath = `./docker/.env`
-  if (!fs.existsSync(envFilePath)) {
-    await fsp.copyFile(envTemplatePath, envFilePath)
-  }
+  return ensureEnvFile('./docker/')
 }
 
 async function dockerDepsUp() {
@@ -128,11 +130,32 @@ async function dockerDepsStop() {
   return waitForProcess(spawn('docker-compose', ['--project-name', dockerDepsProjectName, '-f', 'docker-compose.deps.yml', 'stop'], dockerSpawnOptions))
 }
 
+async function deleteMigratorPublishDir() {
+  const rootMigratorPublishPath = path.join(__dirname, 'OmegaLibs/Omega.DbMigrator/publish/')
+  await new Promise(resolve => rimraf(`${rootMigratorPublishPath}*`, resolve))
+}
+
+async function ensureDbMigratorEnvFile() {
+  return ensureEnvFile('./OmegaLibs/Omega.DbMigrator/')
+}
+
+async function publishMigrator() {
+  return waitForProcess(spawn('dotnet', ['publish', '-o', 'publish'], migratorSpawnOptions))
+}
+
+async function runDbMigrator() {
+  return waitForProcess(spawn('dotnet', ['publish/Omega.DbMigrator.dll'], migratorSpawnOptions))
+}
+
+async function dbDeleteAll() {
+  return waitForProcess(spawn('dotnet', ['publish/Omega.DbMigrator.dll', 'deleteAll'], migratorSpawnOptionsWithInput))
+}
+
 const build = parallel(dotnetPublish, yarnBuild)
 
 // Runs yarn install on client app while also copying client-app .env.template to .env.
 // Add other initial setup tasks here when they're needed.
-exports.initialInstall = parallel(yarnInstallClientApp, copyClientAppEnvFile)
+exports.initialInstall = parallel(yarnInstallClientApp, ensureClientAppEnvFile)
 
 // Run dotnet publish and yarn build in parallel.
 exports.build = build
@@ -158,10 +181,16 @@ exports.dockerRecreate = series(dockerDown, dockerUp)
 // Good for testing app in docker after making source changes. Completely rebuilds the images before bringing containers up.
 exports.dockerRecreateFull = series(parallel(dockerDown, build), copyPublishedToDockerDir, dockerBuild, dockerUp)
 
+// Docker standalone build
 exports.dockerStandaloneBuild = dockerStandaloneBuild
 exports.dockerStandaloneRun = dockerStandaloneRun
 
+// Docker dependency operations
 exports.dockerDepsUp = series(copyDockerEnvFile, dockerDepsUp)
 exports.dockerDepsUpDetached = series(copyDockerEnvFile, dockerDepsUpDetached)
 exports.dockerDepsDown = dockerDepsDown
 exports.dockerDepsStop = dockerDepsStop
+
+// DB operations
+exports.dbMigrate = series(parallel(ensureDbMigratorEnvFile, deleteMigratorPublishDir), publishMigrator, runDbMigrator)
+exports.dbDeleteAll = series(parallel(ensureDbMigratorEnvFile, deleteMigratorPublishDir), publishMigrator, dbDeleteAll)

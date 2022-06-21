@@ -222,7 +222,7 @@ namespace EnvironmentSettings.Logic
             try
             {
                 var stringVal = _environmentVariableProvider.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-                return !string.IsNullOrWhiteSpace(stringVal) && stringVal.Trim() == "Development";
+                return string.IsNullOrWhiteSpace(stringVal) || stringVal.Trim() == "Development";
             }
             catch (Exception)
             {

@@ -147,6 +147,19 @@ To simulate production and microservices in docker:
   - RabbitMQ in docker-compose.deps.yml
   - RabbitMQ basic implementation wired up to worker process service
 
+## Misc
+
+If you're developing on linux, you may run into this error when starting the server:
+
+```plaintext
+System.AggregateException: One or more errors occurred. (The configured user limit (128) on the number of inotify instances has been reached, or the per-process limit on the number of open file descriptors has been reached.)
+```
+
+This is likely caused by too many file watches being used up by vscode. You can increase your `inotify` instances limit (not just watches limit, which is probably already set very high in your `/etc/sysctl.conf` file) by running this command:
+
+`echo fs.inotify.max_user_instances=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p`
+
+
 ## Other Documentation
 
 Design pattern cost benefit analysis: [DesignPatternCostBenefit.md](./docs/DesignPatternCostBenefit.md)

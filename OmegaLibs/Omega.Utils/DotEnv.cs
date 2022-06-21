@@ -1,9 +1,9 @@
 using System;
 using System.IO;
 
-namespace Omega.Logic
+namespace Omega.Utils
 {
-    static class DotEnv
+    public static class DotEnv
     {
         public static void Load(string filePath)
         {
@@ -19,6 +19,11 @@ namespace Omega.Logic
 
                 Environment.SetEnvironmentVariable(parts[0], parts[1]);
             }
+        }
+        
+        public static void Load()
+        {
+            Load(Path.Combine(Directory.GetCurrentDirectory(), ".env"));
         }
     }
 }

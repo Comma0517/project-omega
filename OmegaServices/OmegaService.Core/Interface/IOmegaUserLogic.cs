@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using SharedModel.Auth;
+using OmegaModel.Core;
 
-namespace OmegaService.Auth.Interface
+namespace OmegaService.Core.Interface
 {
     public interface IOmegaUserLogic
     {

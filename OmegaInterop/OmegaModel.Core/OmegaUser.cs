@@ -1,6 +1,6 @@
 using System;
 
-namespace SharedModel.Auth
+namespace OmegaModel.Core
 {
     public class OmegaUser
     {

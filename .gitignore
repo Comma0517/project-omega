@@ -9,3 +9,4 @@ docker/built_server_app
 docker/built_client_app
 docker/mssql/data
 docker/mssql/log
+OmegaLibs/Omega.DbMigrator/publish

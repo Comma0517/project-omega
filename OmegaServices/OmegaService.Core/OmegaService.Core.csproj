@@ -9,7 +9,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\OmegaLibs\OmegaPlumbing\OmegaPlumbing.csproj" />
+    <ProjectReference Include="..\..\OmegaLibs\Omega.Plumbing\Omega.Plumbing.csproj" />
     <ProjectReference Include="..\..\OmegaLibs\RandomStuff\RandomStuff.csproj" />
+    <ProjectReference Include="..\..\OmegaInterop\OmegaModel.Core\OmegaModel.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Migrations\20210316-InitialMigration.sql" />
+    <EmbeddedResource Include="Migrations\20210316-InitialMigration.sql" />
   </ItemGroup>
 </Project>

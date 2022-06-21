@@ -25,7 +25,9 @@
     "dockerDepsUp": "yarn gulp dockerDepsUp",
     "dockerDepsUpDetached": "yarn gulp dockerDepsUpDetached",
     "dockerDepsDown": "yarn gulp dockerDepsDown",
-    "dockerDepsStop": "yarn gulp dockerDepsStop"
+    "dockerDepsStop": "yarn gulp dockerDepsStop",
+    "dbMigrate": "yarn gulp dbMigrate",
+    "dbDeleteAll": "yarn gulp dbDeleteAll"
   },
   "devDependencies": {
     "@types/gulp": "^4.0.8",

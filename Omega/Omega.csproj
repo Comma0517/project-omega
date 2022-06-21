@@ -10,9 +10,13 @@
     <ProjectReference Include="..\OmegaLibs\RandomStuff\RandomStuff.csproj" />
     <ProjectReference Include="..\OmegaServices\OmegaService.Weather\OmegaService.Weather.csproj" />
     <ProjectReference Include="..\OmegaServices\OmegaService.Auth\OmegaService.Auth.csproj" />
-    <ProjectReference Include="..\OmegaLibs\SharedModel\SharedModel.csproj" />
     <ProjectReference Include="..\OmegaServices\OmegaService.Core\OmegaService.Core.csproj" />
     <ProjectReference Include="..\OmegaServices\OmegaService.Web\OmegaService.Web.csproj" />
     <ProjectReference Include="..\OmegaLibs\EnvironmentSettings\EnvironmentSettings.csproj" />
+    <ProjectReference Include="..\OmegaLibs\Omega.Utils\Omega.Utils.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Logic" />
   </ItemGroup>
 </Project>
