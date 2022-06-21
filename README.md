@@ -123,17 +123,36 @@ To simulate production and microservices in docker:
 
 ## Next Steps
 
-Two of the primary project goals have been proven, so the next logic step is to demonstrate the remaining goal is possible by deploying the application as microservices to a real hosting provider. I would like to demonstrate the flexibility of the design pattern by deploying in different forms:
-
-- Actual microservices
-- Single application like it is in development to show that we can treat it just like a monolith if we want to, and to prove that this design pattern can also work for very small projects and proofs of concept.
-
-The next step after deployment is to setup DB connectivity and demonstrate how to use migrations and docker to make development setup and day-to-day use as simple as possible.
+- DB connectivity showing how we can use the initialization hook to allow each service to have it's own DB access logic, but that we can also choose to use some shared setup/helper/middleware code if wanted
+- RPC test between services instead of http rest calls
+- Setup logging abstraction to allow us to add structured logging with a correlation ID for inter-service calls (Serilog?)
+- Global route prefixes for each service so we don't have to add `api/ServiceName` prefix to every controller
+- Service to service client wrapper to abstract error handling and logging
+- HTTPS setup
+  - Local setup running normally as standalone application
+  - Local kubernetes test with HTTPS working between containers
+  - Azure Container Instance deployment setup using Let's Encrypt certificate
+- Auth implementation
+  - Front-end site registration
+  - Service to service auth (OAuth?)
+- Project scaffolding:
+  - Ability to spin up a new copy of the project using some other project "key" besides Omega for all the project/directory names
+  - Ability to have a new project spin up docker containers and do effectively integration tests to ensure successful new project creation
+- Meta project/script to analyze solution
+  - Automatic documentation generation
+  - Analyze affected services based on files changed (for granularity of deployment)
+- Queue setup and worker process services
+  - Abstract queue definition (to allow using cloud services as an option)
+  - Basic worker process type service with an event loop looking for messages
+  - RabbitMQ in docker-compose.deps.yml
+  - RabbitMQ basic implementation wired up to worker process service
 
 ## Other Documentation
 
 Design pattern cost benefit analysis: [DesignPatternCostBenefit.md](./docs/DesignPatternCostBenefit.md)
 
 Design pattern variations: [DesignPatternVariations.md](./docs/DesignPatternVariations.md)
+
+Decisions: [Decisions.md](./docs/Decisions.md)
 
 Software Development Philosophies and Rants: [https://gist.github.com/mikey-t/3d5d6f0f5316abf9e74fb553be9fdef3](https://gist.github.com/mikey-t/3d5d6f0f5316abf9e74fb553be9fdef3)

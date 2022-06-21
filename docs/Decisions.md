@@ -1,0 +1,14 @@
+# Decisions
+
+**Why not develop directly in docker if a goal is fast developer setup and maximum portability?**
+
+**Decision: No**
+
+ I started exploring this option and it has some drawbacks. If you're on windows using the latest version of Docker, you're going to get pushed towards using WSL 2.0, which is extremely cool, but not ready for prime time, in my opinion. For example, Visual Studio does not currently have the ability to easily debug an application running in a docker container in WSL without some non-trivial setup (although they do have this feature  in a preview VS version). There are also some odd bugs with WSL networking that gave me some serious heartburn when trying to get it setup to run in that environment.
+ 
+ I also ran into other issues while attempting to develop inside WSL/docker. For example, currently WSL apps cannot communicate with host machine apps unless you write a custom script to alter networking when WSL boots up (this used to work out of the box in WSL 1.0 with no extra steps). Another issue was that the dotnet executable hangs when run in WSL for no apparent reason. Another was that yarn not being able to operate on windows host files from a WSL prompt, vim not opening, the prompt not exiting, and other misc silly issues. There are outstanding github issues addressing most of these issues, but they're just not quite there yet. I give the WSL team an A for effort but it's really just not ready for general use, in my opinion.
+ 
+ I don't consider lack of developing directly against docker a big downside. Some might say that one point of docker is for the consistency of developing in exactly the same environment it will be deployed in, but in my opinion the cost outweighs the benefit for local development. With our docker setup we can still get the same upper environment matching with our dependencies running in docker, and for specific versions of .NET and Node we have solutions to mitigate issues with the local environment not matching other environments. For .NET we have a built-in way to have multiple versions of .NET installed and to use the correct version automatically. Node/npm/yarn versions can generally be managed with nvm for Node/npm and yarn can simply be latest. On top of this, we can also test our application in non-development mode in docker containers or kubernetes locally - we don't need a dedicated DevOps team or any special server resources for this type of testing as a developer.
+ 
+ And of course, these considerations will probably be a bit different with different tech and goals. For example, if you're implementing this pattern with a goal of cross-platform compatibility in Python you'd want to use a virtual env and if you're in another language there might be some other solution, or maybe even direct docker development might be a good option.
+ 
