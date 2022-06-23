@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.0.78" />
+    <PackageReference Include="dbup" Version="4.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Omega.Plumbing\Omega.Plumbing.csproj" />
+    <ProjectReference Include="..\..\services\OmegaService.Auth\OmegaService.Auth.csproj" />
+    <ProjectReference Include="..\..\services\OmegaService.Core\OmegaService.Core.csproj" />
+    <ProjectReference Include="..\..\services\OmegaService.Weather\OmegaService.Weather.csproj" />
+    <ProjectReference Include="..\..\services\OmegaService.Web\OmegaService.Web.csproj" />
+  </ItemGroup>
+
+</Project>

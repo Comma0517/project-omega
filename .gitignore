@@ -5,8 +5,8 @@ project-omega.sln.DotSettings.user
 **/obj
 **/bin
 **/.env
-docker/built_server_app
-docker/built_client_app
-docker/mssql/data
-docker/mssql/log
-OmegaLibs/Omega.DbMigrator/publish
+deploy/docker/built_server_app
+deploy/docker/built_client_app
+deploy/docker/mssql/data
+deploy/docker/mssql/log
+src/libs/Omega.DbMigrator/publish

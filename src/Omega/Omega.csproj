@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <NoWarn>8034</NoWarn> <!-- Hides the warning about loading multiple Analyzer assemblies -->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\libs\RandomStuff\RandomStuff.csproj" />
+    <ProjectReference Include="..\services\OmegaService.Weather\OmegaService.Weather.csproj" />
+    <ProjectReference Include="..\services\OmegaService.Auth\OmegaService.Auth.csproj" />
+    <ProjectReference Include="..\services\OmegaService.Core\OmegaService.Core.csproj" />
+    <ProjectReference Include="..\services\OmegaService.Web\OmegaService.Web.csproj" />
+    <ProjectReference Include="..\libs\EnvironmentSettings\EnvironmentSettings.csproj" />
+    <ProjectReference Include="..\libs\Omega.Utils\Omega.Utils.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Logic" />
+  </ItemGroup>
+</Project>

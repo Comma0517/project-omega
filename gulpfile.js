@@ -6,7 +6,7 @@ const rimraf = require('rimraf')
 const fs = require('fs')
 const fsp = require('fs').promises
 
-const clientAppPath = 'OmegaServices/OmegaService.Web/client-app/'
+const clientAppPath = 'src/services/OmegaService.Web/client-app/'
 
 // The project name option prevents warnings about unrelated orphaned containers
 const dockerProjectName = 'omega';
@@ -18,8 +18,8 @@ const spawnOptions = {
   stdio: ['ignore', 'inherit', 'inherit'],
 }
 const spawnOptionsWithInput = { ...spawnOptions, stdio: 'inherit' }
-const dockerSpawnOptions = { ...spawnOptions, cwd: path.resolve(__dirname, 'docker') }
-const migratorSpawnOptions = { ...spawnOptions, cwd: path.resolve(__dirname, 'OmegaLibs/Omega.DbMigrator/') }
+const dockerSpawnOptions = { ...spawnOptions, cwd: path.resolve(__dirname, 'deploy/docker') }
+const migratorSpawnOptions = { ...spawnOptions, cwd: path.resolve(__dirname, 'src/libs/Omega.DbMigrator/') }
 const migratorSpawnOptionsWithInput = { ...migratorSpawnOptions, stdio: 'inherit' }
 
 function waitForProcess(childProcess) {
@@ -60,7 +60,7 @@ async function dotnetPublish() {
 }
 
 async function yarnBuild() {
-  const args = ['--cwd', 'OmegaServices/OmegaService.Web/client-app', 'build']
+  const args = ['--cwd', 'src/services/OmegaService.Web/client-app', 'build']
   return waitForProcess(spawn('yarn', args, spawnOptions))
 }
 
@@ -86,8 +86,8 @@ async function dockerStop() {
 }
 
 async function copyPublishedToDockerDir() {
-  const dockerBuiltServerPath = path.join(__dirname, 'docker/built_server_app/')
-  const dockerBuiltClientPath = path.join(__dirname, 'docker/built_client_app/')
+  const dockerBuiltServerPath = path.join(__dirname, 'deploy/docker/built_server_app/')
+  const dockerBuiltClientPath = path.join(__dirname, 'deploy/docker/built_client_app/')
   await Promise.all([
     new Promise(resolve => rimraf(dockerBuiltServerPath, resolve)),
     new Promise(resolve => rimraf(dockerBuiltClientPath, resolve))
@@ -95,8 +95,8 @@ async function copyPublishedToDockerDir() {
   await Promise.all([fsp.mkdir(dockerBuiltServerPath), fsp.mkdir(dockerBuiltClientPath)])
 
   // For excluding a dir, see https://github.com/gulpjs/gulp/issues/165#issuecomment-32611271
-  src(['Omega/bin/Release/net5.0/publish/**/*', '!**/client-app', '!**/client-app/**']).pipe(dest(dockerBuiltServerPath))
-  src('OmegaServices/OmegaService.Web/client-app/build/**/*').pipe(dest(dockerBuiltClientPath))
+  src(['src/Omega/bin/Release/net5.0/publish/**/*', '!**/client-app', '!**/client-app/**']).pipe(dest(dockerBuiltServerPath))
+  src('src/services/OmegaService.Web/client-app/build/**/*').pipe(dest(dockerBuiltClientPath))
 }
 
 async function dockerStandaloneBuild() {
@@ -111,7 +111,7 @@ async function dockerStandaloneRun() {
 }
 
 async function copyDockerEnvFile() {
-  return ensureEnvFile('./docker/')
+  return ensureEnvFile('./deploy/docker/')
 }
 
 async function dockerDepsUp() {
@@ -131,12 +131,12 @@ async function dockerDepsStop() {
 }
 
 async function deleteMigratorPublishDir() {
-  const rootMigratorPublishPath = path.join(__dirname, 'OmegaLibs/Omega.DbMigrator/publish/')
+  const rootMigratorPublishPath = path.join(__dirname, 'src/libs/Omega.DbMigrator/publish/')
   await new Promise(resolve => rimraf(`${rootMigratorPublishPath}*`, resolve))
 }
 
 async function ensureDbMigratorEnvFile() {
-  return ensureEnvFile('./OmegaLibs/Omega.DbMigrator/')
+  return ensureEnvFile('./src/libs/Omega.DbMigrator/')
 }
 
 async function publishMigrator() {
@@ -147,8 +147,12 @@ async function runDbMigrator() {
   return waitForProcess(spawn('dotnet', ['publish/Omega.DbMigrator.dll'], migratorSpawnOptions))
 }
 
-async function dbDeleteAll() {
-  return waitForProcess(spawn('dotnet', ['publish/Omega.DbMigrator.dll', 'deleteAll'], migratorSpawnOptionsWithInput))
+async function dbDropAll() {
+  return waitForProcess(spawn('dotnet', ['publish/Omega.DbMigrator.dll', 'dropAll'], migratorSpawnOptionsWithInput))
+}
+
+async function testDbMigrate() {
+  return waitForProcess(spawn('dotnet', ['publish/Omega.DbMigrator.dll', 'testDbMigrate'], migratorSpawnOptionsWithInput))
 }
 
 const build = parallel(dotnetPublish, yarnBuild)
@@ -193,4 +197,5 @@ exports.dockerDepsStop = dockerDepsStop
 
 // DB operations
 exports.dbMigrate = series(parallel(ensureDbMigratorEnvFile, deleteMigratorPublishDir), publishMigrator, runDbMigrator)
-exports.dbDeleteAll = series(parallel(ensureDbMigratorEnvFile, deleteMigratorPublishDir), publishMigrator, dbDeleteAll)
+exports.dbDropAll = series(parallel(ensureDbMigratorEnvFile, deleteMigratorPublishDir), publishMigrator, dbDropAll)
+exports.testDbMigrate = series(parallel(ensureDbMigratorEnvFile, deleteMigratorPublishDir), publishMigrator, testDbMigrate)
