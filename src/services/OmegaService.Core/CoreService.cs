@@ -1,3 +1,4 @@
+using System;
 using EnvironmentSettings.Interface;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -14,6 +15,7 @@ namespace OmegaService.Core
     {
         public override void ConfigureServices(IServiceCollection services, ILogger logger, IEnvSettings envSettings)
         {
+            Console.WriteLine(envSettings.GetAllAsSafeLogString());
             services.AddScoped<IOmegaUserLogic, OmegaUserLogic>();
             services.AddScoped<IConnectionStringProvider, ConnectionStringProvider>();
             services.AddScoped<IOmegaUserRepository, OmegaUserRepository>();
