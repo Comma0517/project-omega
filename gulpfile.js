@@ -1,5 +1,5 @@
 const { src, dest, parallel, series } = require('gulp')
-const { spawn } = require('child_process')
+const { spawn, spawnSync } = require('child_process')
 const argv = require('yargs').argv
 const path = require('path')
 const rimraf = require('rimraf')
@@ -11,6 +11,8 @@ const clientAppPath = 'src/services/OmegaService.Web/client-app/'
 // The project name option prevents warnings about unrelated orphaned containers
 const dockerProjectName = 'omega';
 const dockerDepsProjectName = 'omega_deps';
+
+const omegaNetworkName = 'omega-net'
 
 const spawnOptions = {
   shell: true,
@@ -67,6 +69,22 @@ async function yarnBuild() {
 async function dockerBash() {
   const args = ['run', '--rm', '--entrypoint', '"bash"', '-it', `omega:${argv.imageName}`]
   return waitForProcess(spawn('docker', args, spawnOptionsWithInput))
+}
+
+// We're assuming that deps isn't up by the lack of the network created in docker-compose.deps.yml
+async function throwIfDockerDepsNotUp() {
+  let childProcess = spawnSync('docker', ['network', 'ls'], { encoding : 'utf8' });
+  if(childProcess.error) {
+    throw childProcess.error
+  }
+  console.log('Docker networks:')
+  console.log(childProcess.stdout)
+  if (!childProcess.stdout || !childProcess.stdout.includes(omegaNetworkName)) {
+    console.error(`ERROR: docker network ${omegaNetworkName} not found`)
+    throw `docker network ${omegaNetworkName} not found, create using "yarn run dockerDepsUp" or "yarn run dockerDepsUpDetached"`
+  } else {
+    console.log(`docker network ${omegaNetworkName} found`)
+  }
 }
 
 async function dockerBuild() {
@@ -165,10 +183,10 @@ exports.initialInstall = parallel(yarnInstallClientApp, ensureClientAppEnvFile)
 exports.build = build
 
 // Run docker-compose build. Can also just run dockerUp since it will build if the image doesn't exist.
-exports.dockerBuild = dockerBuild
+exports.dockerBuild = series(dockerBuild)
 
 // Build the docker images/network if they don't exist and start containers.
-exports.dockerUp = dockerUp
+exports.dockerUp = series(dockerUp)
 
 // Tear down the docker containers/network.
 exports.dockerDown = dockerDown
@@ -180,14 +198,14 @@ exports.dockerStop = dockerStop
 exports.dockerBash = dockerBash
 
 // Good for rapidly making docker-compose changes and testing them
-exports.dockerRecreate = series(dockerDown, dockerUp)
+exports.dockerRecreate = series(throwIfDockerDepsNotUp, dockerDown, dockerUp)
 
 // Good for testing app in docker after making source changes. Completely rebuilds the images before bringing containers up.
-exports.dockerRecreateFull = series(parallel(dockerDown, build), copyPublishedToDockerDir, dockerBuild, dockerUp)
+exports.dockerRecreateFull = series(throwIfDockerDepsNotUp, parallel(dockerDown, build), copyPublishedToDockerDir, dockerBuild, dockerUp)
 
 // Docker standalone build
 exports.dockerStandaloneBuild = dockerStandaloneBuild
-exports.dockerStandaloneRun = dockerStandaloneRun
+exports.dockerStandaloneRun = series(throwIfDockerDepsNotUp, dockerStandaloneRun)
 
 // Docker dependency operations
 exports.dockerDepsUp = series(copyDockerEnvFile, dockerDepsUp)
@@ -196,6 +214,6 @@ exports.dockerDepsDown = dockerDepsDown
 exports.dockerDepsStop = dockerDepsStop
 
 // DB operations
-exports.dbMigrate = series(parallel(ensureDbMigratorEnvFile, deleteMigratorPublishDir), publishMigrator, runDbMigrator)
-exports.dbDropAll = series(parallel(ensureDbMigratorEnvFile, deleteMigratorPublishDir), publishMigrator, dbDropAll)
-exports.testDbMigrate = series(parallel(ensureDbMigratorEnvFile, deleteMigratorPublishDir), publishMigrator, testDbMigrate)
+exports.dbMigrate = series(throwIfDockerDepsNotUp, parallel(ensureDbMigratorEnvFile, deleteMigratorPublishDir), publishMigrator, runDbMigrator)
+exports.dbDropAll = series(throwIfDockerDepsNotUp, parallel(ensureDbMigratorEnvFile, deleteMigratorPublishDir), publishMigrator, dbDropAll)
+exports.testDbMigrate = series(throwIfDockerDepsNotUp, parallel(ensureDbMigratorEnvFile, deleteMigratorPublishDir), publishMigrator, testDbMigrate)
