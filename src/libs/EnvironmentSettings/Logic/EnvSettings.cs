@@ -11,8 +11,6 @@ namespace EnvironmentSettings.Logic
 {
     public class EnvSettings : IEnvSettings
     {
-        public const string IS_LOCAL_KEY = "IS_LOCAL";
-
         private readonly IEnvironmentVariableProvider _environmentVariableProvider;
         private readonly Dictionary<string, EnvSettingWrapper> _envSettingWrappers = new();
 

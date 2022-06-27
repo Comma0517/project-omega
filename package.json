@@ -27,7 +27,7 @@
     "dockerDepsDown": "yarn gulp dockerDepsDown",
     "dockerDepsStop": "yarn gulp dockerDepsStop",
     "dbMigrate": "yarn gulp dbMigrate",
-    "dbDropAll": "yarn gulp dbDeleteAll",
+    "dbDropAll": "yarn gulp dbDropAll",
     "testDbMigrate": "yarn gulp testDbMigrate"
   },
   "devDependencies": {

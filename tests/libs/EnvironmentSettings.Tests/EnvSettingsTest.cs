@@ -23,7 +23,7 @@ namespace EnvironmentSettings.Tests
         [Fact]
         public void AddSettings_NoEnvVars_DefaultSettingsLoaded()
         {
-            _environmentVariableProvider.Setup(envVarProvider => envVarProvider.GetEnvironmentVariable(EnvSettings.IS_LOCAL_KEY)).Returns("true");
+            _environmentVariableProvider.Setup(envVarProvider => envVarProvider.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")).Returns("Development");
             _envSettings = new EnvSettings(_environmentVariableProvider.Object);
             _envSettings.AddSettings<TestEnvSettings>();
 
@@ -161,6 +161,10 @@ namespace EnvironmentSettings.Tests
         [Fact]
         public void GetString_NotLocalWithLocalOnlyDefault_Throws()
         {
+            _environmentVariableProvider.Setup(envVarProvider => envVarProvider.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")).Returns("Production");
+            _envSettings = new EnvSettings(_environmentVariableProvider.Object);
+            _envSettings.AddSettings<TestEnvSettings>();
+            
             FluentActions.Invoking(() => _envSettings.GetString(TestEnvSettings.SomeSecretSettingWithLocalDefaultOnly))
                 .Should().Throw<ApplicationException>()
                 .WithMessage("Setting not loaded: SomeSecretSettingWithLocalDefaultOnly");
