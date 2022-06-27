@@ -50,10 +50,10 @@ namespace OmegaService.Web.Controllers
             });
         }
         
-        [HttpGet("OmegaUser/All")]
+        [HttpGet("OmegaUsers")]
         public async Task<ActionResult<IEnumerable<OmegaUser>>> GetOmegaUsers()
         {
-            var omegaUsers = await  _httpClient.GetFromJsonAsync($"{_coreUrlBase}/OmegaUser/All", typeof(List<OmegaUser>));
+            var omegaUsers = await  _httpClient.GetFromJsonAsync($"{_coreUrlBase}/OmegaUsers", typeof(List<OmegaUser>));
             return Ok(omegaUsers);
         }
     }

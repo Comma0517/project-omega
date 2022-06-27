@@ -8,18 +8,18 @@ namespace OmegaService.Core.Controllers
 {
     [ApiController]
     [Route("api/Core/[controller]")]
-    public class OmegaUserController : ControllerBase
+    public class OmegaUsersController : ControllerBase
     {
-        private readonly ILogger<OmegaUserController> _logger;
+        private readonly ILogger<OmegaUsersController> _logger;
         private readonly IOmegaUserRepository _omegaUserRepository;
 
-        public OmegaUserController(ILogger<OmegaUserController> logger, IOmegaUserRepository omegaUserRepository)
+        public OmegaUsersController(ILogger<OmegaUsersController> logger, IOmegaUserRepository omegaUserRepository)
         {
             _logger = logger;
             _omegaUserRepository = omegaUserRepository;
         }
 
-        [HttpGet("All")]
+        [HttpGet]
         public IEnumerable<OmegaUser> GetCoreMessage()
         {
             return _omegaUserRepository.GetAllUsers();

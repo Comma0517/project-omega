@@ -74,7 +74,7 @@ function Home() {
     setDbMessage('')
     setLoading(true)
     try {
-      let response = await axios.get(`/api/SomeWebEndpoint/OmegaUser/All`)
+      let response = await axios.get(`/api/SomeWebEndpoint/OmegaUsers`)
       console.log(response)
       setDbMessage(JSON.stringify(response.data))
     } catch (err) {
