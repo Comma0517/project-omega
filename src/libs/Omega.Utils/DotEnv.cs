@@ -8,7 +8,12 @@ namespace Omega.Utils
         public static void Load(string filePath)
         {
             if (!File.Exists(filePath))
+            {
+                Console.WriteLine("File not found: " + filePath);
                 return;
+            }
+
+            Console.WriteLine("DotEnv is loading environment variables from " + filePath);
 
             foreach (var line in File.ReadAllLines(filePath))
             {
