@@ -56,6 +56,11 @@ async function ensureClientAppEnvFile() {
   return ensureEnvFile(clientAppPath)
 }
 
+async function yarnStartClient() {
+  const args = ['--cwd', clientAppPath, 'start']
+  return waitForProcess(spawn('yarn', args, spawnOptions))
+}
+
 async function dotnetPublish() {
   const args = ['publish', '-c', 'Release']
   return waitForProcess(spawn('dotnet', args, spawnOptions))
@@ -178,6 +183,9 @@ const build = parallel(dotnetPublish, yarnBuild)
 // Runs yarn install on client app while also copying client-app .env.template to .env.
 // Add other initial setup tasks here when they're needed.
 exports.initialInstall = parallel(yarnInstallClientApp, ensureClientAppEnvFile)
+
+// Run client app
+exports.startClient = series(ensureClientAppEnvFile, yarnStartClient)
 
 // Run dotnet publish and yarn build in parallel.
 exports.build = build
