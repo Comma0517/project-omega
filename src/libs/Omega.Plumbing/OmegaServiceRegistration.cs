@@ -84,35 +84,35 @@ namespace Omega.Plumbing
             }
         }
 
-        public void ConfigureOmegaServices(IApplicationBuilder app, IWebHostEnvironment env)
+        public void ConfigureMiddlewareHooks(IApplicationBuilder app, IWebHostEnvironment env)
         {
             Console.WriteLine($"{OmegaGlobalConstants.LOG_LINE_SEPARATOR}Configuring service middlewares...\n");
 
             foreach (var omegaService in _omegaServices)
             {
-                Console.WriteLine("Configuring service middleware for: " + omegaService.GetType().Name);
+                Console.WriteLine("Configuring service middlewares for: " + omegaService.GetType().Name);
                 omegaService.Configure(app, env);
             }
         }
 
-        public void ConfigureOmegaServicesEndpoints(IEndpointRouteBuilder endpoints, IApplicationBuilder app, IWebHostEnvironment env)
+        public void ConfigureEndpoints(IEndpointRouteBuilder endpoints, IApplicationBuilder app, IWebHostEnvironment env)
         {
-            Console.WriteLine($"{OmegaGlobalConstants.LOG_LINE_SEPARATOR}Configuring service endpoints...\n");
+            Console.WriteLine($"{OmegaGlobalConstants.LOG_LINE_SEPARATOR}Configuring endpoints...\n");
 
             foreach (var omegaService in _omegaServices)
             {
-                Console.WriteLine("Configuring service endpoints for: " + omegaService.GetType().Name);
+                Console.WriteLine("Configuring endpoints for: " + omegaService.GetType().Name);
                 omegaService.ConfigureEndpoints(endpoints, app, env);
             }
         }
 
-        public void ConfigureLastOmegaServices(IApplicationBuilder app, IWebHostEnvironment env)
+        public void ConfigureLastChanceHooks(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            Console.WriteLine($"{OmegaGlobalConstants.LOG_LINE_SEPARATOR}Running last chance configuration hooks...\n");
+            Console.WriteLine($"{OmegaGlobalConstants.LOG_LINE_SEPARATOR}Configuring last chance hooks...\n");
 
             foreach (var omegaService in _omegaServices)
             {
-                Console.WriteLine("Running last chance configuration hook for: " + omegaService.GetType().Name);
+                Console.WriteLine("Configuring last chance hooks for: " + omegaService.GetType().Name);
                 omegaService.ConfigureLast(app, env);
             }
 

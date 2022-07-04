@@ -49,17 +49,17 @@ namespace Omega
         {
             app.UseRouting();
 
-            _omegaServiceRegistration.ConfigureOmegaServices(app, env);
+            _omegaServiceRegistration.ConfigureMiddlewareHooks(app, env);
 
             app.UseEndpoints(endpoints =>
             {
+                _omegaServiceRegistration.ConfigureEndpoints(endpoints, app, env);
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
-                _omegaServiceRegistration.ConfigureOmegaServicesEndpoints(endpoints, app, env);
             });
 
-            _omegaServiceRegistration.ConfigureLastOmegaServices(app, env);
+            _omegaServiceRegistration.ConfigureLastChanceHooks(app, env);
         }
     }
 }
