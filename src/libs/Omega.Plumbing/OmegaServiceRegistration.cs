@@ -6,6 +6,7 @@ using System.Reflection;
 using EnvironmentSettings.Interface;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -29,7 +30,7 @@ namespace Omega.Plumbing
         // https://dotnetstories.com/blog/Dynamically-pre-load-assemblies-in-a-ASPNET-Core-or-any-C-project-en-7155735300
         public List<ProjectOmegaService> LoadOmegaServices(string serviceKey)
         {
-            Console.WriteLine("\n-----------------------------\nLoading Omega Services...\n");
+            Console.WriteLine($"{OmegaGlobalConstants.LOG_LINE_SEPARATOR}Loading Omega Services...\n");
             var omegaServices = new List<ProjectOmegaService>();
 
             var executingDir = AppDomain.CurrentDomain.BaseDirectory;
@@ -48,7 +49,7 @@ namespace Omega.Plumbing
                 Console.WriteLine("Found OmegaService " + omegaServiceAssemblyName);
 
                 var assembly = Assembly.Load(omegaServiceAssemblyName);
-                
+
 
                 var omegaServiceTypes = assembly.GetTypes()
                     .Where(t => t.IsClass && !t.IsAbstract && t.IsSubclassOf(typeof(ProjectOmegaService)))
@@ -57,6 +58,11 @@ namespace Omega.Plumbing
                 foreach (var omegaServiceType in omegaServiceTypes)
                 {
                     var instance = (ProjectOmegaService) Activator.CreateInstance(omegaServiceType);
+                    if (instance == null)
+                    {
+                        throw new ApplicationException("Instantiating Project Omega Service resulted in null for type " + omegaServiceType.Name);
+                    }
+
                     instance.Assembly = assembly;
                     omegaServices.Add(instance);
                 }
@@ -64,31 +70,53 @@ namespace Omega.Plumbing
 
             _omegaServices = omegaServices;
 
-            Console.WriteLine("\n-----------------------------\n");
-
             return _omegaServices;
         }
 
         public void InitOmegaServices(IServiceCollection appServices, IEnvSettings envSettings)
         {
-            Console.WriteLine("\n-----------------------------\nInitializing Omega Services...\n");
+            Console.WriteLine($"{OmegaGlobalConstants.LOG_LINE_SEPARATOR}Initializing Omega Services...\n");
 
             foreach (var service in _omegaServices)
             {
                 Console.WriteLine("Calling InitService for type " + service.GetType().Name);
                 service.ConfigureServices(appServices, _logger, envSettings);
             }
-
-            Console.WriteLine("\n-----------------------------\n");
         }
 
         public void ConfigureOmegaServices(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            Console.WriteLine($"{OmegaGlobalConstants.LOG_LINE_SEPARATOR}Configuring service middlewares...\n");
+
             foreach (var omegaService in _omegaServices)
             {
-                Console.WriteLine("Configuring service: " + omegaService.GetType().Name);
+                Console.WriteLine("Configuring service middleware for: " + omegaService.GetType().Name);
                 omegaService.Configure(app, env);
             }
+        }
+
+        public void ConfigureOmegaServicesEndpoints(IEndpointRouteBuilder endpoints, IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            Console.WriteLine($"{OmegaGlobalConstants.LOG_LINE_SEPARATOR}Configuring service endpoints...\n");
+
+            foreach (var omegaService in _omegaServices)
+            {
+                Console.WriteLine("Configuring service endpoints for: " + omegaService.GetType().Name);
+                omegaService.ConfigureEndpoints(endpoints, app, env);
+            }
+        }
+
+        public void ConfigureLastOmegaServices(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            Console.WriteLine($"{OmegaGlobalConstants.LOG_LINE_SEPARATOR}Running last chance configuration hooks...\n");
+
+            foreach (var omegaService in _omegaServices)
+            {
+                Console.WriteLine("Running last chance configuration hook for: " + omegaService.GetType().Name);
+                omegaService.ConfigureLast(app, env);
+            }
+
+            Console.WriteLine(OmegaGlobalConstants.LOG_LINE_SEPARATOR);
         }
     }
 }

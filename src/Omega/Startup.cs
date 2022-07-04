@@ -12,7 +12,8 @@ namespace Omega
 {
     public class Startup
     {
-        private readonly OmegaServiceRegistration _omegaServiceRegistration = new ();
+        private readonly OmegaServiceRegistration _omegaServiceRegistration = new();
+        private string _serviceKey;
 
         public Startup(IConfiguration configuration)
         {
@@ -29,28 +30,36 @@ namespace Omega
             envSettings.AddSettings<GlobalSettings>();
             services.AddSingleton<IEnvSettings>(envSettings);
 
-            var serviceKey = Environment.GetEnvironmentVariable("SERVICE_KEY");
-            _omegaServiceRegistration.LoadOmegaServices(serviceKey);
+            _serviceKey = envSettings.GetString(GlobalSettings.SERVICE_KEY, null);
+            if (_serviceKey == null)
+            {
+                Console.Write($"{OmegaGlobalConstants.LOG_LINE_SEPARATOR}{envSettings.GetAllAsSafeLogString()}");
+            }
+
+            _omegaServiceRegistration.LoadOmegaServices(_serviceKey);
             _omegaServiceRegistration.InitOmegaServices(services, envSettings);
 
             services.AddControllers(); // We're letting the react app handle all views, so this is probably all we need.
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        // Note that order matters here. OmegaService.Web registration of SPA resources fails if routing and endpoints not setup first.
+        // Most middleware setup happens between routing and endpoints definition where endpoints are non-null (httpContext.GetEndpoint()).
+        // UseEndpoints is terminal if a route matches. This means that a response is returned, so no more middleware after this will run.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            Console.WriteLine("ASPNETCORE_ENVIRONMENT: " + Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"));
             app.UseRouting();
+
+            _omegaServiceRegistration.ConfigureOmegaServices(app, env);
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
+                _omegaServiceRegistration.ConfigureOmegaServicesEndpoints(endpoints, app, env);
             });
 
-            // Note that order matters here. OmegaService.Web registration of SPA resources fails if routing is not setup first.
-            _omegaServiceRegistration.ConfigureOmegaServices(app, env);
+            _omegaServiceRegistration.ConfigureLastOmegaServices(app, env);
         }
     }
 }

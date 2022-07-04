@@ -5,6 +5,10 @@ namespace Omega.Plumbing
 {
     public enum GlobalSettings
     {
+        [SettingInfo(ShouldLogValue = true)]
+        ASPNETCORE_ENVIRONMENT,
+        [SettingInfo(ShouldLogValue = true)]
+        SERVICE_KEY,
         [SettingInfo(DefaultValue = "localhost", DefaultForEnvironment = DefaultSettingForEnvironment.LocalOnly, ShouldLogValue = true)]
         DEFAULT_DB_HOST,
         [SettingInfo(DefaultValue = "1433", DefaultForEnvironment = DefaultSettingForEnvironment.LocalOnly, ShouldLogValue = true)]
