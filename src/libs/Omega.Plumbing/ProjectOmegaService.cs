@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Net.Http;
 using System.Reflection;
 using EnvironmentSettings.Interface;
 using Microsoft.AspNetCore.Builder;
@@ -11,26 +13,103 @@ namespace Omega.Plumbing
 {
     public abstract class ProjectOmegaService
     {
-        public Assembly Assembly { get; set; }
-        
-        // Wire up dependency injection
-        public abstract void ConfigureServices(IServiceCollection services, ILogger logger, IEnvSettings envSettings);
-        
-        // Setup DB connections, queue init, etc
-        public abstract void Configure(IApplicationBuilder app, IWebHostEnvironment env);
-        
-        public abstract void ConfigureEndpoints(IEndpointRouteBuilder endpoints, IApplicationBuilder app, IWebHostEnvironment env);
+        // Convention based key. Example: for assembly OmegaService.Auth the ServiceKey is Auth.
+        private string ServiceKey { get; }
 
-        // Currently only used by Web to configure Spa services
-        public abstract void ConfigureLast(IApplicationBuilder app, IWebHostEnvironment env);
+        // Currently used to infer the ServiceKey by convention and for DbMigrator to load scripts embedded in the assembly
+        public Assembly Assembly { get; }
 
-        protected static void LogEnvSettings(IEnvSettings envSettings, string serviceKey)
+        protected ProjectOmegaService(Assembly assembly)
+        {
+            if (assembly == null)
+            {
+                throw new ArgumentNullException(nameof(assembly));
+            }
+
+            Assembly = assembly;
+            var assemblyName = assembly.GetName().Name;
+
+            if (assemblyName == null)
+            {
+                throw new ApplicationException("Project Omega Service assembly name is null for " + assembly.FullName);
+            }
+
+            ServiceKey = GetServiceKeyFromAssemblyName(assemblyName);
+        }
+
+        public static string GetServiceKeyFromAssemblyName(string assemblyName)
+        {
+            return assemblyName.Replace(OmegaGlobalConstants.OMEGA_SERVICE_PREFIX, "").Replace(".dll", "");
+        }
+
+        // Opportunity to wire up dependency injection
+        public virtual void ConfigureServices(IServiceCollection services, ILogger logger, IEnvSettings envSettings)
+        {
+            LogEnvSettings(envSettings, ServiceKey);
+        }
+
+        // Web uses this to call UseStaticFiles and UseSpaStaticFiles before Startup calls UseRouting
+        public virtual void ConfigureBeforeRouting(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+        }
+
+        public virtual void ConfigureMiddleware(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+        }
+
+        public virtual void ConfigureEndpoints(IEndpointRouteBuilder endpoints, IApplicationBuilder app, IWebHostEnvironment env)
+        {
+        }
+
+        // Currently only used by Web to call UseSpa
+        public virtual void ConfigureLast(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+        }
+
+        private static void LogEnvSettings(IEnvSettings envSettings, string serviceKey)
         {
             if (serviceKey != null && envSettings.GetString(GlobalSettings.SERVICE_KEY, null) == serviceKey)
             {
-                
-                Console.WriteLine(OmegaGlobalConstants.LOG_LINE_SEPARATOR + envSettings.GetAllAsSafeLogString());                
+                Console.WriteLine(OmegaGlobalConstants.LOG_LINE_SEPARATOR + envSettings.GetAllAsSafeLogString());
             }
         }
-    }   
+    }
+
+    public static class ProjectOmegaExtensions
+    {
+        public static void AddOmegaHttpClient<TClient, TImplementation>(this IServiceCollection services, string serviceKey, IEnvSettings envSettings)
+            where TClient : class
+            where TImplementation : class, TClient
+        {
+            if (services == null)
+            {
+                throw new ArgumentNullException(nameof(services));
+            }
+
+            if (string.IsNullOrWhiteSpace(serviceKey))
+            {
+                throw new ArgumentNullException(nameof(serviceKey));
+            }
+            
+            // Service HttpClient already registered
+            if (services.Any(x => x.ServiceType == typeof(TClient)))
+            {
+                return;
+            }
+
+            services.AddHttpClient<TClient, TImplementation>(client =>
+            {
+                var hostEnvKey = $"{serviceKey.ToUpper()}_HOST";
+                var portEnvKey = $"{serviceKey.ToUpper()}_PORT";
+                client.BaseAddress = new Uri($"http://{envSettings.GetString(hostEnvKey)}:{envSettings.GetString(portEnvKey)}/");
+                client.DefaultRequestHeaders.Add(OmegaGlobalConstants.INTER_SERVICE_HEADER_KEY, "true");
+            }).ConfigureHttpMessageHandlerBuilder(builder =>
+            {
+                builder.PrimaryHandler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = (m, c, ch, e) => true
+                };
+            });
+        }
+    }
 }

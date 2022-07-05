@@ -10,12 +10,12 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\interop\OmegaInterop.Auth\OmegaInterop.Auth.csproj" />
+    <ProjectReference Include="..\..\interop\OmegaInterop.Core\OmegaInterop.Core.csproj" />
+    <ProjectReference Include="..\..\interop\OmegaInterop.Weather\OmegaInterop.Weather.csproj" />
     <ProjectReference Include="..\..\libs\EnvironmentSettings\EnvironmentSettings.csproj" />
     <ProjectReference Include="..\..\libs\Omega.Plumbing\Omega.Plumbing.csproj" />
     <ProjectReference Include="..\..\libs\RandomStuff\RandomStuff.csproj" />
-    <ProjectReference Include="..\..\interop\OmegaModel.Weather\OmegaModel.Weather.csproj" />
-    <ProjectReference Include="..\..\interop\OmegaModel.Auth\OmegaModel.Auth.csproj" />
-    <ProjectReference Include="..\..\interop\OmegaModel.Core\OmegaModel.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.SpaServices" Version="5.0.0-preview.8.20414.8" />

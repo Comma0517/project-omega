@@ -7,6 +7,7 @@ const fs = require('fs')
 const fsp = require('fs').promises
 
 const clientAppPath = 'src/services/OmegaService.Web/client-app/'
+const serverAppPath = 'src/Omega/'
 
 // The project name option prevents warnings about unrelated orphaned containers
 const dockerProjectName = 'omega';
@@ -61,6 +62,15 @@ async function yarnStartClient() {
   return waitForProcess(spawn('yarn', args, spawnOptions))
 }
 
+async function ensureServerAppEnvFile() {
+  return ensureEnvFile(serverAppPath)
+}
+
+async function dotnetWatchRun() {
+  const args = ['watch', '-p', serverAppPath, 'run']
+  return waitForProcess(spawn('dotnet', args, spawnOptions))
+}
+
 async function dotnetPublish() {
   const args = ['publish', '-c', 'Release']
   return waitForProcess(spawn('dotnet', args, spawnOptions))
@@ -72,7 +82,7 @@ async function yarnBuild() {
 }
 
 async function dockerBash() {
-  const args = ['run', '--rm', '--entrypoint', '"bash"', '-it', `omega:${argv.imageName}`]
+  const args = ['run', '--rm', '--entrypoint', '"bash"', '-it', `omega_${argv.imageName}:1.0`]
   return waitForProcess(spawn('docker', args, spawnOptionsWithInput))
 }
 
@@ -187,6 +197,9 @@ exports.initialInstall = parallel(yarnInstallClientApp, ensureClientAppEnvFile)
 // Run client app
 exports.startClient = series(ensureClientAppEnvFile, yarnStartClient)
 
+// Run dotnet server app
+exports.startServer = series(ensureServerAppEnvFile, dotnetWatchRun)
+
 // Run dotnet publish and yarn build in parallel.
 exports.build = build
 
@@ -210,6 +223,7 @@ exports.dockerRecreate = series(throwIfDockerDepsNotUp, dockerDown, dockerUp)
 
 // Good for testing app in docker after making source changes. Completely rebuilds the images before bringing containers up.
 exports.dockerRecreateFull = series(throwIfDockerDepsNotUp, parallel(dockerDown, build), copyPublishedToDockerDir, dockerBuild, dockerUp)
+exports.dockerRecreateServer = series(throwIfDockerDepsNotUp, parallel(dockerDown, dotnetPublish), copyPublishedToDockerDir, dockerBuild, dockerUp)
 
 // Docker standalone build
 exports.dockerStandaloneBuild = dockerStandaloneBuild

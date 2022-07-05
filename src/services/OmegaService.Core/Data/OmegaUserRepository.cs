@@ -1,9 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using Dapper;
-using Omega.Plumbing;
-using OmegaModel.Core;
+using Omega.Plumbing.Data;
+using OmegaInterop.Core;
 using OmegaService.Core.Interface;
 
 namespace OmegaService.Core.Data
@@ -17,7 +16,8 @@ namespace OmegaService.Core.Data
         public int AddUser(OmegaUser user)
         {
             using var connection = new SqlConnection(ConnectionString);
-            return connection.QuerySingle<int>("insert into [OmegaUser] (FirstName, LastName, Email) output inserted.Id values (@FirstName, @LastName, @Email)", user);
+            const string sql = "insert into [OmegaUser] (FirstName, LastName, Email) output inserted.Id values (@FirstName, @LastName, @Email)";
+            return connection.QuerySingle<int>(sql, user);
         }
 
         public IEnumerable<OmegaUser> GetAllUsers()

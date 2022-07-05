@@ -202,7 +202,7 @@ namespace EnvironmentSettings.Logic
                 }
                 else
                 {
-                    value = envSettingWrapper.SettingInfo.ShouldLogValue ? envSettingWrapper.Value : "not whitelisted";
+                    value = envSettingWrapper.SettingInfo.ShouldLogValue ? envSettingWrapper.Value : "not-whitelisted";
                     if (!envSettingWrapper.SettingInfo.ShouldLogValue && string.IsNullOrWhiteSpace(envSettingWrapper.Value))
                     {
                         value += " - empty";

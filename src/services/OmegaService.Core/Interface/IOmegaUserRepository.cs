@@ -1,6 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using OmegaModel.Core;
+using OmegaInterop.Core;
 
 namespace OmegaService.Core.Interface
 {

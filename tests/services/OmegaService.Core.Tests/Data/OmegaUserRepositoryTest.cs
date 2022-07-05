@@ -2,8 +2,8 @@ using System.Data.SqlClient;
 using System.Linq;
 using Dapper;
 using FluentAssertions;
-using Omega.Plumbing;
-using OmegaModel.Core;
+using Omega.Plumbing.Data;
+using OmegaInterop.Core;
 using OmegaService.Core.Data;
 using Xunit;
 
@@ -33,7 +33,7 @@ namespace OmegaService.Core.Tests.Data
         public void GetAllUsers_UsersExist_UsersReturned()
         {
             _omegaUserRepository.DeleteAllUsers();
-            OmegaUser expected = new OmegaUser {FirstName = "Chuck", LastName = "Norris", Email = "chuck.norris@test.com"};
+            var expected = new OmegaUser {FirstName = "Chuck", LastName = "Norris", Email = "chuck.norris@test.com"};
             var userId = _omegaUserRepository.AddUser(expected);
             expected.Id = userId;
 

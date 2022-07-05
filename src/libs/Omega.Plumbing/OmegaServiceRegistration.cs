@@ -16,8 +16,7 @@ namespace Omega.Plumbing
     {
         private readonly ILogger _logger;
         private List<ProjectOmegaService> _omegaServices = new();
-
-        private const string OMEGA_SERVICE_PREFIX = "OmegaService";
+        private readonly List<string> _allServiceKeys = new();
 
         public OmegaServiceRegistration()
         {
@@ -28,20 +27,22 @@ namespace Omega.Plumbing
         // Note that we have to manually load assemblies that aren't explicitly used (we're only accessing these via reflection).
         // May need to add functionality to dynamically load references of references - see
         // https://dotnetstories.com/blog/Dynamically-pre-load-assemblies-in-a-ASPNET-Core-or-any-C-project-en-7155735300
-        public List<ProjectOmegaService> LoadOmegaServices(string serviceKey)
+        public IList<ProjectOmegaService> LoadOmegaServices(string forServiceKey)
         {
             Console.WriteLine($"{OmegaGlobalConstants.LOG_LINE_SEPARATOR}Loading Omega Services...\n");
             var omegaServices = new List<ProjectOmegaService>();
 
             var executingDir = AppDomain.CurrentDomain.BaseDirectory;
-            var searchPattern = $"{OMEGA_SERVICE_PREFIX}*.dll";
+            var searchPattern = $"{OmegaGlobalConstants.OMEGA_SERVICE_PREFIX}*.dll";
             string[] filePaths = Directory.GetFiles(executingDir, searchPattern, SearchOption.TopDirectoryOnly);
 
             foreach (var filePath in filePaths)
             {
                 var omegaServiceAssemblyName = Path.GetFileName(filePath).Replace(".dll", "");
-
-                if (serviceKey != null && !omegaServiceAssemblyName.EndsWith(serviceKey))
+                var serviceKey = ProjectOmegaService.GetServiceKeyFromAssemblyName(omegaServiceAssemblyName);
+                _allServiceKeys.Add(serviceKey);
+                
+                if (forServiceKey != null && !omegaServiceAssemblyName.EndsWith(forServiceKey))
                 {
                     continue;
                 }
@@ -50,20 +51,18 @@ namespace Omega.Plumbing
 
                 var assembly = Assembly.Load(omegaServiceAssemblyName);
 
-
                 var omegaServiceTypes = assembly.GetTypes()
                     .Where(t => t.IsClass && !t.IsAbstract && t.IsSubclassOf(typeof(ProjectOmegaService)))
                     .ToList();
 
                 foreach (var omegaServiceType in omegaServiceTypes)
                 {
-                    var instance = (ProjectOmegaService) Activator.CreateInstance(omegaServiceType);
+                    var instance = (ProjectOmegaService) Activator.CreateInstance(omegaServiceType, assembly);
                     if (instance == null)
                     {
                         throw new ApplicationException("Instantiating Project Omega Service resulted in null for type " + omegaServiceType.Name);
                     }
 
-                    instance.Assembly = assembly;
                     omegaServices.Add(instance);
                 }
             }
@@ -83,6 +82,17 @@ namespace Omega.Plumbing
                 service.ConfigureServices(appServices, _logger, envSettings);
             }
         }
+        
+        public void ConfigureBeforeRouting(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            Console.WriteLine($"{OmegaGlobalConstants.LOG_LINE_SEPARATOR}Configuring services before routing...\n");
+
+            foreach (var omegaService in _omegaServices)
+            {
+                Console.WriteLine("Configuring service middlewares for: " + omegaService.GetType().Name);
+                omegaService.ConfigureBeforeRouting(app, env);
+            }
+        }
 
         public void ConfigureMiddlewareHooks(IApplicationBuilder app, IWebHostEnvironment env)
         {
@@ -91,7 +101,7 @@ namespace Omega.Plumbing
             foreach (var omegaService in _omegaServices)
             {
                 Console.WriteLine("Configuring service middlewares for: " + omegaService.GetType().Name);
-                omegaService.Configure(app, env);
+                omegaService.ConfigureMiddleware(app, env);
             }
         }
 
@@ -117,6 +127,34 @@ namespace Omega.Plumbing
             }
 
             Console.WriteLine(OmegaGlobalConstants.LOG_LINE_SEPARATOR);
+        }
+
+        public IList<string> GetAllServiceKeys()
+        {
+            return _allServiceKeys;
+        }
+        
+        public Uri GetProxyUri(Uri originalUri, IEnvSettings envSettings)
+        {
+            Console.WriteLine("originalPath: " + originalUri);
+            if (originalUri == null)
+            {
+                throw new ApplicationException("Cannot get proxy Uri from a null Uri");
+            }
+
+            var noServiceFoundError = "Service not found for Uri " + originalUri.ToString();
+            if (originalUri.Segments.Length < 3)
+            {
+                throw new ApplicationException(noServiceFoundError);
+            }
+
+            // Example segments: /api/Core/SomeEndpoint, [0] = /, [1] = api/, [2] = Core/
+            var serviceKeyUpper = originalUri.Segments[2].Replace("/", "").ToUpper();
+            var host = envSettings.GetString($"{serviceKeyUpper}_HOST");
+            var port = envSettings.GetString($"{serviceKeyUpper}_PORT");
+
+            var uriBuilder = new UriBuilder(originalUri) {Host = host, Port = int.Parse(port)};
+            return uriBuilder.Uri;
         }
     }
 }

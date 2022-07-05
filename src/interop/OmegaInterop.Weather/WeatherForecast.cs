@@ -1,6 +1,6 @@
-using System;
+﻿using System;
 
-namespace Omega
+namespace OmegaInterop.Weather
 {
     public class WeatherForecast
     {

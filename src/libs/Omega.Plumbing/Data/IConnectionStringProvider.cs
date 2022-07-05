@@ -1,4 +1,4 @@
-namespace Omega.Plumbing
+namespace Omega.Plumbing.Data
 {
     public interface IConnectionStringProvider
     {

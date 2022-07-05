@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using OmegaModel.Core;
+using OmegaInterop.Core;
 using OmegaService.Core.Interface;
 
 namespace OmegaService.Core.Controllers

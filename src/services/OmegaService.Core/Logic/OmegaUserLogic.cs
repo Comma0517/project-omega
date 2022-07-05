@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using OmegaModel.Core;
+using OmegaInterop.Core;
 using OmegaService.Core.Interface;
 
 namespace OmegaService.Core.Logic

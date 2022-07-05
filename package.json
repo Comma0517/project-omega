@@ -8,7 +8,7 @@
   "scripts": {
     "installAll": "yarn install && yarn gulp initialInstall",
     "client": "yarn gulp startClient",
-    "server": "dotnet watch -p src/Omega run",
+    "server": "yarn gulp startServer",
     "both": "concurrently \"yarn run client\" \"yarn run server\" --kill-others",
     "build": "yarn gulp build",
     "bash:core": "yarn gulp dockerBash --image-name core",
@@ -20,6 +20,7 @@
     "dockerStop": "yarn gulp dockerStop",
     "dockerRecreate": "yarn gulp dockerRecreate",
     "dockerRecreateFull": "yarn gulp dockerRecreateFull",
+    "dockerRecreateServer": "yarn gulp dockerRecreateServer",
     "dockerStandaloneBuild": "yarn gulp dockerStandaloneBuild",
     "dockerStandaloneRun": "yarn gulp dockerStandaloneRun",
     "dockerDepsUp": "yarn gulp dockerDepsUp",

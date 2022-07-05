@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using OmegaModel.Weather;
+using OmegaInterop.Weather;
 using OmegaService.Weather.Interface;
 
 namespace OmegaService.Weather.Controllers
@@ -19,9 +19,10 @@ namespace OmegaService.Weather.Controllers
             _fakeWeatherGetter = fakeWeatherGetter;
         }
 
-        [HttpGet]
+        [HttpGet("Randoms")]
         public IEnumerable<WeatherForecast> Get()
         {
+            var testHeader = Request.Headers["X-InterServiceRequest"];
             return _fakeWeatherGetter.GetRandomWeatherForecasts();
         }
     }

@@ -1,6 +1,6 @@
 using System;
 
-namespace Omega.Plumbing
+namespace Omega.Plumbing.Data
 {
     [AttributeUsage(AttributeTargets.Class)]
     public class DbInfo : Attribute

@@ -1,7 +1,7 @@
 using EnvironmentSettings.Interface;
 using EnvironmentSettings.Logic;
 
-namespace Omega.Plumbing
+namespace Omega.Plumbing.Data
 {
     public class ConnectionStringProvider : IConnectionStringProvider
     {

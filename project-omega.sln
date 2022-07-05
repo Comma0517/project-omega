@@ -9,11 +9,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Omega", "src\Omega\Omega.cs
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "interop", "interop", "{057A371C-3370-4BF9-9C62-86DCE0F7F9E9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OmegaModel.Auth", "src\interop\OmegaModel.Auth\OmegaModel.Auth.csproj", "{2E90B442-D98C-4A31-A571-1FCA8B2BF44F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OmegaInterop.Auth", "src\interop\OmegaInterop.Auth\OmegaInterop.Auth.csproj", "{2E90B442-D98C-4A31-A571-1FCA8B2BF44F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OmegaModel.Core", "src\interop\OmegaModel.Core\OmegaModel.Core.csproj", "{1CF8D066-4B28-416F-8F92-BC8136BEC383}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OmegaInterop.Core", "src\interop\OmegaInterop.Core\OmegaInterop.Core.csproj", "{1CF8D066-4B28-416F-8F92-BC8136BEC383}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OmegaModel.Weather", "src\interop\OmegaModel.Weather\OmegaModel.Weather.csproj", "{2290C594-1111-4096-BE3A-97BA574BF8DC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OmegaInterop.Weather", "src\interop\OmegaInterop.Weather\OmegaInterop.Weather.csproj", "{2290C594-1111-4096-BE3A-97BA574BF8DC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "libs", "libs", "{49E12F2F-40FE-40B8-A55C-60AF0AA642B7}"
 EndProject

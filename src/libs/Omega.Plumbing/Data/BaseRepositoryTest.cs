@@ -1,6 +1,6 @@
 using EnvironmentSettings.Logic;
 
-namespace Omega.Plumbing
+namespace Omega.Plumbing.Data
 {
     public abstract class BaseRepositoryTest
     {

@@ -3,9 +3,9 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\interop\OmegaInterop.Weather\OmegaInterop.Weather.csproj" />
     <ProjectReference Include="..\..\libs\Omega.Plumbing\Omega.Plumbing.csproj" />
     <ProjectReference Include="..\..\libs\RandomStuff\RandomStuff.csproj" />
-    <ProjectReference Include="..\..\interop\OmegaModel.Weather\OmegaModel.Weather.csproj" />
   </ItemGroup>
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />

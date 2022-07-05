@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using OmegaModel.Weather;
+using OmegaInterop.Weather;
 
 namespace OmegaService.Weather.Interface
 {

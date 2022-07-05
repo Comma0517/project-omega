@@ -8,6 +8,7 @@ using DbUp;
 using DbUp.Engine;
 using EnvironmentSettings.Logic;
 using Omega.Plumbing;
+using Omega.Plumbing.Data;
 using Omega.Utils;
 
 namespace Omega.DbMigrator
@@ -24,7 +25,7 @@ namespace Omega.DbMigrator
                 DotEnv.Load();
                 _envSettings.AddSettings<GlobalSettings>();
                 Console.WriteLine(_envSettings.GetAllAsSafeLogString());
-                
+
                 // Option for test databases
                 if (args.Length > 0 && args[0] == "testDbMigrate")
                 {
@@ -69,12 +70,13 @@ namespace Omega.DbMigrator
             {
                 Console.WriteLine("Using dbPrefix: " + dbPrefix);
             }
+
             var serviceWithDbInfos = GetServiceWithDbInfos();
 
             foreach (var serviceWithDbInfo in serviceWithDbInfos)
             {
                 string dbName = dbPrefix + serviceWithDbInfo.DbInfo.DbName;
-                DbInfo dbInfoWithPrefix = new DbInfo { DbName = dbName};
+                DbInfo dbInfoWithPrefix = new DbInfo {DbName = dbName};
                 Console.WriteLine($"Ensuring the database {dbName} exists");
                 EnsureDatabase.For.SqlDatabase(BuildConnectionString(dbInfoWithPrefix));
             }
@@ -100,7 +102,7 @@ namespace Omega.DbMigrator
         {
             var dbInfo = string.IsNullOrWhiteSpace(dbPrefix)
                 ? serviceWithDbInfo.DbInfo
-                : new DbInfo {DbName = dbPrefix + serviceWithDbInfo.DbInfo.DbName}; 
+                : new DbInfo {DbName = dbPrefix + serviceWithDbInfo.DbInfo.DbName};
             var connectionString = BuildConnectionString(dbInfo);
 
             EnsureDatabase.For.SqlDatabase(connectionString);

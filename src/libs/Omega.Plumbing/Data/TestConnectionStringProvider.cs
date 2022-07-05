@@ -1,6 +1,6 @@
 using EnvironmentSettings.Interface;
 
-namespace Omega.Plumbing
+namespace Omega.Plumbing.Data
 {
     public class TestConnectionStringProvider : IConnectionStringProvider
     {

@@ -32,6 +32,7 @@ function Home() {
   const [randomString, setRandomString] = useState('')
   const [coreMessage, setCoreMessage] = useState('')
   const [dbMessage, setDbMessage] = useState('')
+  const [proxyTestMessage, setProxyTestMessage] = useState('')
 
   async function getRandomString() {
     if (loading) {
@@ -84,6 +85,23 @@ function Home() {
     }
   }
 
+  async function proxyTest() {
+    if (loading) {
+      return
+    }
+    setProxyTestMessage('')
+    setLoading(true)
+    try {
+      let response = await axios.get(`/api/Weather/FakeWeather/`)
+      console.log(response)
+      setProxyTestMessage(JSON.stringify(response.data))
+    } catch (err) {
+      console.log('API error: ', err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <>
       <div className="jumbotron">
@@ -98,7 +116,8 @@ function Home() {
       <h3>Service Call Demo</h3>
       <p><button className="btn btn-primary" onClick={() => getRandomString()}>Get a Random String</button>&nbsp;&nbsp;<span>{randomString}</span></p>
       <p><button className="btn btn-primary" onClick={() => serviceToServiceTest()}>Service to Service Test</button>&nbsp;&nbsp;<span>{coreMessage}</span></p>
-      <p><button className="btn btn-primary" onClick={() => dbTest()}>Service to Service Test</button>&nbsp;&nbsp;<span>{dbMessage}</span></p>
+      <p><button className="btn btn-primary" onClick={() => dbTest()}>DB Test</button>&nbsp;&nbsp;<span>{dbMessage}</span></p>
+      <p><button className="btn btn-primary" onClick={() => proxyTest()}>Proxy Test</button>&nbsp;&nbsp;<span>{proxyTestMessage}</span></p>
     </>
   )
 }

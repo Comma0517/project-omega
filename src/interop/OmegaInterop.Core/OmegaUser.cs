@@ -1,6 +1,6 @@
 using System;
 
-namespace OmegaModel.Core
+namespace OmegaInterop.Core
 {
     public class OmegaUser
     {

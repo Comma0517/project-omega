@@ -1,12 +1,10 @@
 using System.Collections.Generic;
-using System.Net.Http;
-using System.Net.Http.Json;
 using System.Threading.Tasks;
 using EnvironmentSettings.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using OmegaModel.Core;
-using OmegaModel.Weather;
+using OmegaInterop.Core;
+using OmegaInterop.Weather;
 
 namespace OmegaService.Web.Controllers
 {
@@ -15,45 +13,42 @@ namespace OmegaService.Web.Controllers
     public class SomeWebEndpointController : ControllerBase
     {
         private readonly ILogger<SomeWebEndpointController> _logger;
-        private readonly string _coreUrlBase;
-        private readonly string _weatherUrlBase;
+        private readonly IWeatherClient _weatherClient;
+        private readonly ICoreClient _coreClient;
 
-        private static readonly HttpClient _httpClient = new HttpClient(new HttpClientHandler
-        {
-            ClientCertificateOptions = ClientCertificateOption.Manual,
-            ServerCertificateCustomValidationCallback = (httpRequestMessage, cert, cetChain, policyErrors) => true
-        });
-
-        public SomeWebEndpointController(ILogger<SomeWebEndpointController> logger, IEnvSettings envSettings)
+        public SomeWebEndpointController(
+            ILogger<SomeWebEndpointController> logger,
+            IEnvSettings envSettings,
+            IWeatherClient weatherClient,
+            ICoreClient coreClient)
         {
             _logger = logger;
-
-            _coreUrlBase = $"http://{envSettings.GetString(WebEnvSettings.CORE_HOST)}:{envSettings.GetString(WebEnvSettings.CORE_PORT)}/api/Core";
-            _weatherUrlBase = $"http://{envSettings.GetString(WebEnvSettings.WEATHER_HOST)}:{envSettings.GetString(WebEnvSettings.WEATHER_PORT)}/api/Weather";
+            _weatherClient = weatherClient;
+            _coreClient = coreClient;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetStuff()
         {
             _logger.LogInformation("SomeWebEndpointController default route called - will call into core service");
-            _logger.LogInformation($"CORE_URL_BASE: {_coreUrlBase}");
-            _logger.LogInformation($"WEATHER_URL_BASE: {_weatherUrlBase}");
+            _logger.LogInformation("CORE_URL_BASE: {CoreUrlBase}", _coreClient.GetHttpClient().BaseAddress);
+            _logger.LogInformation("WEATHER_URL_BASE: {WeatherUrlBase}", _weatherClient.GetHttpClient().BaseAddress);
 
-            var coreResponseString = await _httpClient.GetStringAsync($"{_coreUrlBase}/DummyCore");
-            var forecasts = await _httpClient.GetFromJsonAsync($"{_weatherUrlBase}/WeatherForecast", typeof(List<WeatherForecast>));
+            var coreDummyMessage = await _coreClient.GetCoreDummyMessage();
+            var forecasts = await _weatherClient.GetRandomWeatherForecasts();
 
             return new JsonResult(new
             {
                 fromSomeWeb = "stuff from web controller",
-                fromCore = coreResponseString,
+                fromCore = coreDummyMessage,
                 fromWeather = forecasts
             });
         }
-        
+
         [HttpGet("OmegaUsers")]
         public async Task<ActionResult<IEnumerable<OmegaUser>>> GetOmegaUsers()
         {
-            var omegaUsers = await  _httpClient.GetFromJsonAsync($"{_coreUrlBase}/OmegaUsers", typeof(List<OmegaUser>));
+            var omegaUsers = await _coreClient.GetOmegaUsers();
             return Ok(omegaUsers);
         }
     }

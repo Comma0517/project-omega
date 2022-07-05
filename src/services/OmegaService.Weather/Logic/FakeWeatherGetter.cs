@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
-using OmegaModel.Weather;
+using OmegaInterop.Weather;
 using OmegaService.Weather.Interface;
 using RandomStuff;
 

@@ -5,17 +5,32 @@ namespace Omega.Plumbing
 {
     public enum GlobalSettings
     {
-        [SettingInfo(ShouldLogValue = true)]
-        ASPNETCORE_ENVIRONMENT,
-        [SettingInfo(ShouldLogValue = true)]
-        SERVICE_KEY,
+        [SettingInfo(ShouldLogValue = true)] ASPNETCORE_ENVIRONMENT,
+
+        [SettingInfo(ShouldLogValue = true)] SERVICE_KEY,
+
         [SettingInfo(DefaultValue = "localhost", DefaultForEnvironment = DefaultSettingForEnvironment.LocalOnly, ShouldLogValue = true)]
         DEFAULT_DB_HOST,
+
         [SettingInfo(DefaultValue = "1433", DefaultForEnvironment = DefaultSettingForEnvironment.LocalOnly, ShouldLogValue = true)]
         DEFAULT_DB_PORT,
+
         [SettingInfo(DefaultValue = "sa", DefaultForEnvironment = DefaultSettingForEnvironment.LocalOnly)]
         DEFAULT_DB_USER,
+
         [SettingInfo(DefaultValue = "Abc1234!", DefaultForEnvironment = DefaultSettingForEnvironment.LocalOnly)]
-        DEFAULT_DB_PASS
+        DEFAULT_DB_PASS,
+
+        [SettingInfo(DefaultValue = "localhost", ShouldLogValue = true, DefaultForEnvironment = DefaultSettingForEnvironment.LocalOnly)]
+        CORE_HOST,
+
+        [SettingInfo(DefaultValue = "5000", ShouldLogValue = true, DefaultForEnvironment = DefaultSettingForEnvironment.LocalOnly)]
+        CORE_PORT,
+
+        [SettingInfo(DefaultValue = "localhost", ShouldLogValue = true, DefaultForEnvironment = DefaultSettingForEnvironment.LocalOnly)]
+        WEATHER_HOST,
+
+        [SettingInfo(DefaultValue = "5000", ShouldLogValue = true, DefaultForEnvironment = DefaultSettingForEnvironment.LocalOnly)]
+        WEATHER_PORT
     }
 }

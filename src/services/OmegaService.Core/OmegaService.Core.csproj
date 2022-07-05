@@ -9,9 +9,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\interop\OmegaInterop.Core\OmegaInterop.Core.csproj" />
     <ProjectReference Include="..\..\libs\Omega.Plumbing\Omega.Plumbing.csproj" />
     <ProjectReference Include="..\..\libs\RandomStuff\RandomStuff.csproj" />
-    <ProjectReference Include="..\..\interop\OmegaModel.Core\OmegaModel.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

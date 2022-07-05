@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace Omega.Plumbing
+namespace Omega.Plumbing.Data
 {
     public class BaseRepository<T> where T : ProjectOmegaService
     {

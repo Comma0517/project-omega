@@ -6,8 +6,8 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\interop\OmegaInterop.Auth\OmegaInterop.Auth.csproj" />
     <ProjectReference Include="..\..\libs\Omega.Plumbing\Omega.Plumbing.csproj" />
-    <ProjectReference Include="..\..\interop\OmegaModel.Auth\OmegaModel.Auth.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Interface" />
