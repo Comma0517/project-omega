@@ -162,9 +162,7 @@ To simulate production and microservices in docker:
 
 If you're developing on linux, you may run into this error when starting the server:
 
-```plaintext
-System.AggregateException: One or more errors occurred. (The configured user limit (128) on the number of inotify instances has been reached, or the per-process limit on the number of open file descriptors has been reached.)
-```
+> System.AggregateException: One or more errors occurred. (The configured user limit (128) on the number of inotify instances has been reached, or the per-process limit on the number of open file descriptors has been reached.)
 
 This is likely caused by too many file watches being used up by vscode. You can increase your `inotify` instances limit (not just watches limit, which is probably already set very high in your `/etc/sysctl.conf` file) by running this command:
 
