@@ -111,6 +111,7 @@ Steps:
 
 - Clone this repo.
 - In a terminal from repo root, run `yarn run installAll`
+- Start the dependencies - currently this is just an MSSQL DB running in docker - using the command `yarn run dockerDepsUpDetached`. To change the port to use for DB access, modify .env in `src/Omega`.
 - Run the app in local development mode using one of these options:
   - Option 1: in a terminal from repo root run `yarn run both` (this uses concurrently to run the commands from options 2)
   - Option 2: use 2 separate terminals. In one terminal run `yarn run client` and in the other run `yarn run server`
@@ -118,16 +119,23 @@ Steps:
 
 To simulate production and microservices in docker:
 
+- Ensure docker dependencies are running with `yarn run dockerDepsUpDetached`
 - In a terminal from repo root, run `yarn run dockerRecreateFull`
 - Access [http://localhost:5000](http://localhost:5000)
 
 ## Next Steps
 
-- DB connectivity showing how we can use the initialization hook to allow each service to have it's own DB access logic, but that we can also choose to use some shared setup/helper/middleware code if wanted
-- RPC test between services instead of http rest calls
-- Setup logging abstraction to allow us to add structured logging with a correlation ID for inter-service calls (Serilog?)
-- Global route prefixes for each service so we don't have to add `api/ServiceName` prefix to every controller
-- Service to service client wrapper to abstract error handling and logging
+- Fix lame UI demo code in `App.tsx`
+- Add additional documentation
+  - Diagrams of how docker simulation works
+  - Docker dependencies
+    - Text description of what it is, how it works 
+    - Diagrams of how docker deps fits into development process
+  - Routing/proxy documentation
+  - DB migrations
+- RPC test between services instead of http rest calls (maybe with something like this: [https://github.com/aspnet/AspLabs/tree/main/src/GrpcHttpApi](https://github.com/aspnet/AspLabs/tree/main/src/GrpcHttpApi))
+- Setup logging abstraction to allow us to add structured logging with a correlation ID for inter-service calls (will use Serilog)
+- Add to inter-service client base class to abstract error handling and logging
 - HTTPS setup
   - Local setup running normally as standalone application
   - Local kubernetes test with HTTPS working between containers
@@ -135,17 +143,20 @@ To simulate production and microservices in docker:
 - Auth implementation
   - Front-end site registration
   - Service to service auth (OAuth?)
-- Project scaffolding:
-  - Ability to spin up a new copy of the project using some other project "key" besides Omega for all the project/directory names
-  - Ability to have a new project spin up docker containers and do effectively integration tests to ensure successful new project creation
-- Meta project/script to analyze solution
-  - Automatic documentation generation
-  - Analyze affected services based on files changed (for granularity of deployment)
+- Address issue with needing to modify several .env files to change DB port to use
+- Automatic documentation generation (swagger and html xml documentation output)
 - Queue setup and worker process services
   - Abstract queue definition (to allow using cloud services as an option)
   - Basic worker process type service with an event loop looking for messages
   - RabbitMQ in docker-compose.deps.yml
   - RabbitMQ basic implementation wired up to worker process service
+- Additional local kubernetes demo work
+  - Database will probably require learning how to use a kubernetes persistent volume, unless I can figure out how to adjust networking to expose the host DB
+- Meta project/script to analyze solution
+  - Analyze affected services based on files changed (for granularity of deployment)
+- Project scaffolding:
+  - Ability to spin up a new copy of the project using some other project "key" besides Omega for all the project/directory names
+  - Ability to have a new project spin up docker containers and do effectively integration tests to ensure successful new project creation
 
 ## Misc
 
