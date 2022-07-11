@@ -125,7 +125,7 @@ To simulate production and microservices in docker:
 
 ## Next Steps
 
-- Fix lame UI demo code in `App.tsx`
+- Setup logging abstraction to allow us to add structured logging with a correlation ID for inter-service calls (will use Serilog)
 - Add additional documentation
   - Diagrams of how docker simulation works
   - Docker dependencies
@@ -134,7 +134,6 @@ To simulate production and microservices in docker:
   - Routing/proxy documentation
   - DB migrations
 - RPC test between services instead of http rest calls (maybe with something like this: [https://github.com/aspnet/AspLabs/tree/main/src/GrpcHttpApi](https://github.com/aspnet/AspLabs/tree/main/src/GrpcHttpApi))
-- Setup logging abstraction to allow us to add structured logging with a correlation ID for inter-service calls (will use Serilog)
 - Add to inter-service client base class to abstract error handling and logging
 - HTTPS setup
   - Local setup running normally as standalone application

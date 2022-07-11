@@ -86,8 +86,6 @@ namespace Omega
                     pattern: "{controller}/{action=Index}/{id?}");
             });
 
-            _omegaServiceRegistration.ConfigureLastChanceHooks(app, env);
-            
             // Catch-all for not found routes. Requests that aren't for the SPA or any API endpoint.
             app.Use(next => async context =>
             {
@@ -101,6 +99,8 @@ namespace Omega
 
                 await next(context);
             });
+            
+            _omegaServiceRegistration.ConfigureLastChanceHooks(app, env);
         }
 
         private void PopulateAllServiceUrlPrefixes()
@@ -111,7 +111,5 @@ namespace Omega
                 _allNonWebServiceUrlPrefixes.Add($"/api/{key}/");
             }
         }
-
-        
     }
 }
