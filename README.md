@@ -111,7 +111,8 @@ Steps:
 
 - Clone this repo.
 - In a terminal from repo root, run `yarn run installAll`
-- Start the dependencies - currently this is just an MSSQL DB running in docker - using the command `yarn run dockerDepsUpDetached`. To change the port to use for DB access, modify .env in `src/Omega`.
+- Start the dependencies - currently this is just an MSSQL DB running in docker - using the command `yarn run dockerDepsUpDetached`. To change the port to use for DB access, modify .env in `src/Omega` and `src/libs/Omega.DbMigrator/` (copy `.env.template` to `.env` if it doesn't exist).
+- Run DB migrations the first time you run, or when you get someone elses changes with database updates: `yarn run dbMigrate`
 - Run the app in local development mode using one of these options:
   - Option 1: in a terminal from repo root run `yarn run both` (this uses concurrently to run the commands from options 2)
   - Option 2: use 2 separate terminals. In one terminal run `yarn run client` and in the other run `yarn run server`
