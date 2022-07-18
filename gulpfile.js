@@ -1,17 +1,19 @@
-const { src, dest, parallel, series } = require('gulp')
-const { spawn, spawnSync } = require('child_process')
+const {src, dest, parallel, series} = require('gulp')
+const {spawn, spawnSync} = require('child_process')
 const argv = require('yargs').argv
 const path = require('path')
 const rimraf = require('rimraf')
 const fs = require('fs')
 const fsp = require('fs').promises
+const which = require('which')
 
 const clientAppPath = 'src/services/OmegaService.Web/client-app/'
 const serverAppPath = 'src/Omega/'
 
 // The project name option prevents warnings about unrelated orphaned containers
-const dockerProjectName = 'omega';
-const dockerDepsProjectName = 'omega_deps';
+const dockerProjectName = 'omega'
+const dockerDepsProjectName = 'omega_deps'
+const dockerDepsComposeName = 'docker-compose.deps.yml'
 
 const omegaNetworkName = 'omega-net'
 
@@ -20,10 +22,10 @@ const spawnOptions = {
   cwd: __dirname,
   stdio: ['ignore', 'inherit', 'inherit'],
 }
-const spawnOptionsWithInput = { ...spawnOptions, stdio: 'inherit' }
-const dockerSpawnOptions = { ...spawnOptions, cwd: path.resolve(__dirname, 'deploy/docker') }
-const migratorSpawnOptions = { ...spawnOptions, cwd: path.resolve(__dirname, 'src/libs/Omega.DbMigrator/') }
-const migratorSpawnOptionsWithInput = { ...migratorSpawnOptions, stdio: 'inherit' }
+const spawnOptionsWithInput = {...spawnOptions, stdio: 'inherit'}
+const dockerSpawnOptions = {...spawnOptions, cwd: path.resolve(__dirname, 'deploy/docker')}
+const migratorSpawnOptions = {...spawnOptions, cwd: path.resolve(__dirname, 'src/libs/Omega.DbMigrator/')}
+const migratorSpawnOptionsWithInput = {...migratorSpawnOptions, stdio: 'inherit'}
 
 function waitForProcess(childProcess) {
   return new Promise((resolve, reject) => {
@@ -81,15 +83,31 @@ async function yarnBuild() {
   return waitForProcess(spawn('yarn', args, spawnOptions))
 }
 
+async function ensureDocker() {
+  if (!which.sync('docker')) {
+    throw Error('docker was not found')
+  }
+
+  let childProcess = spawnSync('docker', ['info'], {encoding: 'utf8'})
+  if (childProcess.error) {
+    throw childProcess.error
+  }
+  if (!childProcess.stdout || childProcess.stdout.includes('ERROR: error during connect')) {
+    throw Error('docker is not running')
+  }
+}
+
 async function dockerBash() {
+  await ensureDocker()
   const args = ['run', '--rm', '--entrypoint', '"bash"', '-it', `omega_${argv.imageName}:1.0`]
   return waitForProcess(spawn('docker', args, spawnOptionsWithInput))
 }
 
 // We're assuming that deps isn't up by the lack of the network created in docker-compose.deps.yml
 async function throwIfDockerDepsNotUp() {
-  let childProcess = spawnSync('docker', ['network', 'ls'], { encoding : 'utf8' });
-  if(childProcess.error) {
+  await ensureDocker()
+  let childProcess = spawnSync('docker', ['network', 'ls'], {encoding: 'utf8'})
+  if (childProcess.error) {
     throw childProcess.error
   }
   console.log('Docker networks:')
@@ -103,18 +121,22 @@ async function throwIfDockerDepsNotUp() {
 }
 
 async function dockerBuild() {
+  await ensureDocker()
   return waitForProcess(spawn('docker-compose', ['--project-name', dockerProjectName, 'build', '--no-cache'], dockerSpawnOptions))
 }
 
 async function dockerUp() {
+  await ensureDocker()
   return waitForProcess(spawn('docker-compose', ['--project-name', dockerProjectName, 'up'], dockerSpawnOptions))
 }
 
 async function dockerDown() {
+  await ensureDocker()
   return waitForProcess(spawn('docker-compose', ['--project-name', dockerProjectName, 'down'], dockerSpawnOptions))
 }
 
 async function dockerStop() {
+  await ensureDocker()
   return waitForProcess(spawn('docker-compose', ['--project-name', dockerProjectName, 'stop'], dockerSpawnOptions))
 }
 
@@ -133,11 +155,13 @@ async function copyPublishedToDockerDir() {
 }
 
 async function dockerStandaloneBuild() {
+  await ensureDocker()
   const args = ['build', '-f', 'Dockerfile.standalone', '-t', 'omega_standalone:1.0', '.']
   return waitForProcess(spawn('docker', args, dockerSpawnOptions))
 }
 
 async function dockerStandaloneRun() {
+  await ensureDocker()
   // Note that running docker as a gulp command disallows passing the -t command since that would try to configure the terminal
   const args = ['run', '-i', '--rm', '-p', '5000:80', 'omega_standalone:1.0']
   return waitForProcess(spawn('docker', args, dockerSpawnOptions))
@@ -148,19 +172,23 @@ async function copyDockerEnvFile() {
 }
 
 async function dockerDepsUp() {
-  return waitForProcess(spawn('docker-compose', ['--project-name', dockerDepsProjectName, '-f', 'docker-compose.deps.yml', 'up'], dockerSpawnOptions))
+  await ensureDocker()
+  return waitForProcess(spawn('docker-compose', ['--project-name', dockerDepsProjectName, '-f', dockerDepsComposeName, 'up'], dockerSpawnOptions))
 }
 
 async function dockerDepsUpDetached() {
-  return waitForProcess(spawn('docker-compose', ['--project-name', dockerDepsProjectName, '-f', 'docker-compose.deps.yml', 'up', '-d'], dockerSpawnOptions))
+  await ensureDocker()
+  return waitForProcess(spawn('docker-compose', ['--project-name', dockerDepsProjectName, '-f', dockerDepsComposeName, 'up', '-d'], dockerSpawnOptions))
 }
 
 async function dockerDepsDown() {
-  return waitForProcess(spawn('docker-compose', ['--project-name', dockerDepsProjectName, '-f', 'docker-compose.deps.yml', 'down'], dockerSpawnOptions))
+  await ensureDocker()
+  return waitForProcess(spawn('docker-compose', ['--project-name', dockerDepsProjectName, '-f', dockerDepsComposeName, 'down'], dockerSpawnOptions))
 }
 
 async function dockerDepsStop() {
-  return waitForProcess(spawn('docker-compose', ['--project-name', dockerDepsProjectName, '-f', 'docker-compose.deps.yml', 'stop'], dockerSpawnOptions))
+  await ensureDocker()
+  return waitForProcess(spawn('docker-compose', ['--project-name', dockerDepsProjectName, '-f', dockerDepsComposeName, 'stop'], dockerSpawnOptions))
 }
 
 async function deleteMigratorPublishDir() {
