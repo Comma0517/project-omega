@@ -3,22 +3,22 @@ using EnvironmentSettings.Interface;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Omega.Plumbing;
 using OmegaInterop.Core;
 using OmegaInterop.Weather;
+using Serilog;
 
 namespace OmegaService.Web
 {
     public class WebService : ProjectOmegaService
     {
-        public WebService(Assembly assembly) : base(assembly)
+        public WebService(Assembly assembly) : base(assembly, Log.ForContext<WebService>())
         {
         }
 
-        public override void ConfigureServices(IServiceCollection services, ILogger logger, IEnvSettings envSettings)
+        public override void ConfigureServices(IServiceCollection services, IEnvSettings envSettings)
         {
-            base.ConfigureServices(services, logger, envSettings);
+            base.ConfigureServices(services, envSettings);
             envSettings.AddSettings<WebEnvSettings>();
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "client-app/build"; });
 

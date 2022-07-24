@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace Omega.Plumbing
 {
@@ -20,8 +20,7 @@ namespace Omega.Plumbing
 
         public OmegaServiceRegistration()
         {
-            using var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
-            _logger = loggerFactory.CreateLogger<OmegaServiceRegistration>();
+            _logger = Log.ForContext<OmegaServiceRegistration>();
         }
 
         // Note that we have to manually load assemblies that aren't explicitly used (we're only accessing these via reflection).
@@ -29,7 +28,7 @@ namespace Omega.Plumbing
         // https://dotnetstories.com/blog/Dynamically-pre-load-assemblies-in-a-ASPNET-Core-or-any-C-project-en-7155735300
         public IList<ProjectOmegaService> LoadOmegaServices(string forServiceKey)
         {
-            Console.WriteLine($"{OmegaGlobalConstants.LOG_LINE_SEPARATOR}Loading Omega Services...\n");
+            _logger.Information(OmegaGlobalConstants.LOG_LINE_SEPARATOR + "Loading Omega Services...\n");
             var omegaServices = new List<ProjectOmegaService>();
 
             var executingDir = AppDomain.CurrentDomain.BaseDirectory;
@@ -47,7 +46,7 @@ namespace Omega.Plumbing
                     continue;
                 }
 
-                Console.WriteLine("Found OmegaService " + omegaServiceAssemblyName);
+                _logger.Information("Found OmegaService {OmegaServiceName}", omegaServiceAssemblyName);
 
                 var assembly = Assembly.Load(omegaServiceAssemblyName);
 
@@ -74,59 +73,59 @@ namespace Omega.Plumbing
 
         public void InitOmegaServices(IServiceCollection appServices, IEnvSettings envSettings)
         {
-            Console.WriteLine($"{OmegaGlobalConstants.LOG_LINE_SEPARATOR}Initializing Omega Services...\n");
+            _logger.Information(OmegaGlobalConstants.LOG_LINE_SEPARATOR + "Initializing Omega Services...\n");
 
             foreach (var service in _omegaServices)
             {
-                Console.WriteLine("Calling InitService for type " + service.GetType().Name);
-                service.ConfigureServices(appServices, _logger, envSettings);
+                _logger.Information("Calling InitService for type {OmegaServiceType}", service.GetType().Name);
+                service.ConfigureServices(appServices, envSettings);
             }
         }
         
         public void ConfigureBeforeRouting(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            Console.WriteLine($"{OmegaGlobalConstants.LOG_LINE_SEPARATOR}Configuring services before routing...\n");
+            _logger.Information(OmegaGlobalConstants.LOG_LINE_SEPARATOR + "Configuring services before routing...\n");
 
             foreach (var omegaService in _omegaServices)
             {
-                Console.WriteLine("Configuring service middlewares for: " + omegaService.GetType().Name);
+                _logger.Information("Configuring service middlewares for: {OmegaServiceType}", omegaService.GetType().Name);
                 omegaService.ConfigureBeforeRouting(app, env);
             }
         }
 
         public void ConfigureMiddlewareHooks(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            Console.WriteLine($"{OmegaGlobalConstants.LOG_LINE_SEPARATOR}Configuring service middlewares...\n");
+            _logger.Information(OmegaGlobalConstants.LOG_LINE_SEPARATOR + "Configuring service middlewares...\n");
 
             foreach (var omegaService in _omegaServices)
             {
-                Console.WriteLine("Configuring service middlewares for: " + omegaService.GetType().Name);
+                _logger.Information("Configuring service middlewares for: {OmegaServiceType}", omegaService.GetType().Name);
                 omegaService.ConfigureMiddleware(app, env);
             }
         }
 
         public void ConfigureEndpoints(IEndpointRouteBuilder endpoints, IApplicationBuilder app, IWebHostEnvironment env)
         {
-            Console.WriteLine($"{OmegaGlobalConstants.LOG_LINE_SEPARATOR}Configuring endpoints...\n");
+            _logger.Information(OmegaGlobalConstants.LOG_LINE_SEPARATOR + "Configuring endpoints...\n");
 
             foreach (var omegaService in _omegaServices)
             {
-                Console.WriteLine("Configuring endpoints for: " + omegaService.GetType().Name);
+                _logger.Information("Configuring endpoints for: {OmegaServiceType}", omegaService.GetType().Name);
                 omegaService.ConfigureEndpoints(endpoints, app, env);
             }
         }
 
         public void ConfigureLastChanceHooks(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            Console.WriteLine($"{OmegaGlobalConstants.LOG_LINE_SEPARATOR}Configuring last chance hooks...\n");
+            _logger.Information(OmegaGlobalConstants.LOG_LINE_SEPARATOR + "Configuring last chance hooks...\n");
 
             foreach (var omegaService in _omegaServices)
             {
-                Console.WriteLine("Configuring last chance hooks for: " + omegaService.GetType().Name);
+                _logger.Information("Configuring last chance hooks for: {OmegaServiceType}", omegaService.GetType().Name);
                 omegaService.ConfigureLast(app, env);
             }
 
-            Console.WriteLine(OmegaGlobalConstants.LOG_LINE_SEPARATOR);
+            _logger.Information(OmegaGlobalConstants.LOG_LINE_SEPARATOR);
         }
 
         public IList<string> GetAllServiceKeys()
@@ -136,7 +135,7 @@ namespace Omega.Plumbing
         
         public Uri GetProxyUri(Uri originalUri, IEnvSettings envSettings)
         {
-            Console.WriteLine("originalPath: " + originalUri);
+            _logger.Debug("Proxy original path: {OriginalPath}", originalUri);
             if (originalUri == null)
             {
                 throw new ApplicationException("Cannot get proxy Uri from a null Uri");
@@ -154,6 +153,7 @@ namespace Omega.Plumbing
             var port = envSettings.GetString($"{serviceKeyUpper}_PORT");
 
             var uriBuilder = new UriBuilder(originalUri) {Host = host, Port = int.Parse(port)};
+            _logger.Debug("Proxy new path: {NewPath}", uriBuilder.Path);
             return uriBuilder.Uri;
         }
     }

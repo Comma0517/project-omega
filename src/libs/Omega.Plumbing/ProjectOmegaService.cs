@@ -7,26 +7,24 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace Omega.Plumbing
 {
     public abstract class ProjectOmegaService
     {
+        protected readonly ILogger _logger;
+        
         // Convention based key. Example: for assembly OmegaService.Auth the ServiceKey is Auth.
         private string ServiceKey { get; }
 
         // Currently used to infer the ServiceKey by convention and for DbMigrator to load scripts embedded in the assembly
         public Assembly Assembly { get; }
 
-        protected ProjectOmegaService(Assembly assembly)
+        protected ProjectOmegaService(Assembly assembly, ILogger logger)
         {
-            if (assembly == null)
-            {
-                throw new ArgumentNullException(nameof(assembly));
-            }
-
-            Assembly = assembly;
+            Assembly = assembly ?? throw new ArgumentNullException(nameof(assembly));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             var assemblyName = assembly.GetName().Name;
 
             if (assemblyName == null)
@@ -43,7 +41,7 @@ namespace Omega.Plumbing
         }
 
         // Opportunity to wire up dependency injection
-        public virtual void ConfigureServices(IServiceCollection services, ILogger logger, IEnvSettings envSettings)
+        public virtual void ConfigureServices(IServiceCollection services, IEnvSettings envSettings)
         {
             LogEnvSettings(envSettings, ServiceKey);
         }
@@ -66,11 +64,11 @@ namespace Omega.Plumbing
         {
         }
 
-        private static void LogEnvSettings(IEnvSettings envSettings, string serviceKey)
+        private void LogEnvSettings(IEnvSettings envSettings, string serviceKey)
         {
             if (serviceKey != null && envSettings.GetString(GlobalSettings.SERVICE_KEY, null) == serviceKey)
             {
-                Console.WriteLine(OmegaGlobalConstants.LOG_LINE_SEPARATOR + envSettings.GetAllAsSafeLogString());
+                _logger.Information("Environment settings loaded:\n{EnvSettings}", envSettings.GetAllAsSafeLogString());
             }
         }
     }

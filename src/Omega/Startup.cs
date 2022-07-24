@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,7 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Omega.Plumbing;
 using Omega.Plumbing.Http;
 using Omega.Plumbing.Middleware;
-using Omega.Utils;
+using Serilog;
 
 namespace Omega
 {
@@ -23,6 +22,7 @@ namespace Omega
         private readonly OmegaServiceRegistration _omegaServiceRegistration = new();
         private string _serviceKey;
         private List<string> _allNonWebServiceUrlPrefixes;
+        private ILogger _logger;
 
         public Startup(IConfiguration configuration)
         {
@@ -36,21 +36,23 @@ namespace Omega
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            DotEnv.Load();
+            _logger = Log.ForContext<Startup>();
+
             var envSettings = new EnvSettings(new EnvironmentVariableProvider());
             envSettings.AddSettings<GlobalSettings>();
             _envSettings = envSettings;
+
             services.AddSingleton<IEnvSettings>(envSettings);
 
             _serviceKey = envSettings.GetString(GlobalSettings.SERVICE_KEY, null);
             if (_serviceKey == null)
             {
-                Console.Write($"{OmegaGlobalConstants.LOG_LINE_SEPARATOR}{envSettings.GetAllAsSafeLogString()}");
+                Log.Information("Environment settings loaded:\n{EnvSettings}", envSettings.GetAllAsSafeLogString());
             }
 
             _omegaServiceRegistration.LoadOmegaServices(_serviceKey);
             _omegaServiceRegistration.InitOmegaServices(services, envSettings);
-            
+
             services.AddProxy(options =>
             {
                 options.PrepareRequest = (_, message) =>
@@ -60,7 +62,7 @@ namespace Omega
                 };
             });
 
-            services.AddControllers(); // We're letting the react app handle all views, so this is probably all we need.
+            services.AddControllers(); // We're letting the react app handle all views, so this is probably all we need instead of AddControllersWithViews.
         }
 
         // Note that order matters here. OmegaService.Web registration of SPA resources fails if routing and endpoints not setup first.
@@ -69,12 +71,12 @@ namespace Omega
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             PopulateAllServiceUrlPrefixes();
-            
+
             _omegaServiceRegistration.ConfigureBeforeRouting(app, env);
 
             app.UseRouting();
 
-            _omegaServiceRegistration.ConfigureMiddlewareHooks(app, env);            
+            _omegaServiceRegistration.ConfigureMiddlewareHooks(app, env);
 
             app.UseOmegaProxy(_omegaServiceRegistration, _envSettings, _allNonWebServiceUrlPrefixes);
 
@@ -91,7 +93,8 @@ namespace Omega
             {
                 if (context.RequestPathStartsWith("/api/"))
                 {
-                    Console.WriteLine("Catch-all route reached for non-web requests with no known api endpoint - returning 404 for " + context.Request.GetDisplayUrl());
+                    _logger.Information("Catch-all route reached for non-web requests with no known api endpoint - returning 404 for {NotFoundUrl}",
+                        context.Request.GetDisplayUrl());
                     context.Response.StatusCode = StatusCodes.Status404NotFound;
                     await context.Response.WriteAsync("Not Found");
                     return;
@@ -99,7 +102,7 @@ namespace Omega
 
                 await next(context);
             });
-            
+
             _omegaServiceRegistration.ConfigureLastChanceHooks(app, env);
         }
 

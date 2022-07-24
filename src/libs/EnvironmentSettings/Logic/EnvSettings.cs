@@ -188,7 +188,6 @@ namespace EnvironmentSettings.Logic
         public string GetAllAsSafeLogString()
         {
             var sb = new StringBuilder();
-            sb.Append("Environment settings loaded:\n\n");
             foreach (var (key, envSettingWrapper) in _envSettingWrappers)
             {
                 string value;

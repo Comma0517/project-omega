@@ -4,6 +4,7 @@ using System.Data.SqlClient;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using RandomStuff;
+using Serilog;
 
 namespace OmegaService.Web.Controllers
 {
@@ -28,17 +29,17 @@ namespace OmegaService.Web.Controllers
         [HttpGet("strings/{numStrings}")]
         public IEnumerable<string> GetStrings(int? numStrings)
         {
-            int num = numStrings ?? 0;
+            var num = numStrings ?? 0;
             const int MAX_NUM = 20;
-            string ERROR_MSG = $"Num strings must be between 0 and {MAX_NUM}";
+            var ERROR_MSG = $"Num strings must be between 0 and {MAX_NUM}";
 
-            if (numStrings > 20 || numStrings < 0)
+            if (num > 20 || num < 0)
             {
                 throw new ApplicationException(ERROR_MSG);
             }
 
-            var strings = new List<String>();
-            for (int i = 0; i < numStrings; i++)
+            var strings = new List<string>();
+            for (var i = 0; i < num; i++)
             {
                 strings.Add(OmegaRandom.getRandomString(20));
             }

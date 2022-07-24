@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Omega.Plumbing.Http;
+using Serilog;
 
 namespace Omega.Plumbing.Middleware
 {
@@ -16,6 +17,7 @@ namespace Omega.Plumbing.Middleware
         private readonly OmegaServiceRegistration _omegaServiceRegistration;
         private readonly IEnvSettings _envSettings;
         private readonly List<string> _urlPrefixesToProxy;
+        private readonly ILogger _logger;
 
         public OmegaProxyMiddleware(
             RequestDelegate next,
@@ -27,23 +29,23 @@ namespace Omega.Plumbing.Middleware
             _omegaServiceRegistration = omegaServiceRegistration;
             _envSettings = envSettings;
             _urlPrefixesToProxy = urlPrefixesToProxy;
+            _logger = Log.ForContext<OmegaProxyMiddleware>();
         }
 
         public async Task InvokeAsync(HttpContext context)
         {
-            Console.WriteLine("*****************");
-            Console.WriteLine("URL: " + context.Request.GetDisplayUrl());
+            _logger.Debug("Running OmegaProxyMiddleware for URL: {Url}", context.Request.GetDisplayUrl());
 
             if (!context.RequestPathStartsWith("/api/"))
             {
-                Console.WriteLine("Does not start with /api/, calling next()");
+                _logger.Debug("Does not start with /api/, calling next()");
                 await _next(context);
             }
             else
             {
                 if (ShouldProxyRequest(context))
                 {
-                    Console.WriteLine("Proxy request: " + context.Request.GetDisplayUrl());
+                    _logger.Debug("Using proxy for request: {Url}", context.Request.GetDisplayUrl());
                     await context.ProxyRequest(_omegaServiceRegistration.GetProxyUri(new Uri(context.Request.GetEncodedUrl()), _envSettings));
                     return;
                 }

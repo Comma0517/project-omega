@@ -167,7 +167,7 @@ async function dockerStandaloneRun() {
   return waitForProcess(spawn('docker', args, dockerSpawnOptions))
 }
 
-async function copyDockerEnvFile() {
+async function ensureDockerEnvFile() {
   return ensureEnvFile('./deploy/docker/')
 }
 
@@ -220,7 +220,7 @@ const build = parallel(dotnetPublish, yarnBuild)
 
 // Runs yarn install on client app while also copying client-app .env.template to .env.
 // Add other initial setup tasks here when they're needed.
-exports.initialInstall = parallel(yarnInstallClientApp, ensureClientAppEnvFile)
+exports.initialInstall = parallel(yarnInstallClientApp, ensureClientAppEnvFile, ensureServerAppEnvFile, ensureDbMigratorEnvFile, ensureDockerEnvFile)
 
 // Run client app
 exports.startClient = series(ensureClientAppEnvFile, yarnStartClient)
@@ -258,8 +258,8 @@ exports.dockerStandaloneBuild = dockerStandaloneBuild
 exports.dockerStandaloneRun = series(throwIfDockerDepsNotUp, dockerStandaloneRun)
 
 // Docker dependency operations
-exports.dockerDepsUp = series(copyDockerEnvFile, dockerDepsUp)
-exports.dockerDepsUpDetached = series(copyDockerEnvFile, dockerDepsUpDetached)
+exports.dockerDepsUp = series(ensureDockerEnvFile, dockerDepsUp)
+exports.dockerDepsUpDetached = series(ensureDockerEnvFile, dockerDepsUpDetached)
 exports.dockerDepsDown = dockerDepsDown
 exports.dockerDepsStop = dockerDepsStop
 
