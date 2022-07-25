@@ -5,6 +5,8 @@ project-omega.sln.DotSettings.user
 **/obj
 **/bin
 **/.env
+.env.server
+.env.client
 deploy/docker/built_server_app
 deploy/docker/built_client_app
 deploy/docker/mssql/data

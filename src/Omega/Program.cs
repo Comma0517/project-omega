@@ -20,15 +20,16 @@ namespace Omega
         {
             DotEnv.Load();
 
-            var seqHost = Environment.GetEnvironmentVariable("OMEGA_SEQ_HOST");
-            var seqPort = Environment.GetEnvironmentVariable("OMEGA_SEQ_INGESTION_PORT");
+            var seqUrl = $"http://{Environment.GetEnvironmentVariable("OMEGA_SEQ_HOST")}:{Environment.GetEnvironmentVariable("OMEGA_SEQ_INGESTION_PORT")}";
             
             Serilog.Debugging.SelfLog.Enable(Console.Error);
             Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(Configuration)
                 .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] [{SourceContext}] {Message:lj}{NewLine}{Exception}")
-                .WriteTo.Seq($"http://{seqHost}:{seqPort}")
+                .WriteTo.Seq(seqUrl)
                 .CreateLogger();
+            
+            Log.ForContext<Program>().Information("Using Seq ingestion url: {SeqIngestionUrl}", seqUrl);
             
             try
             {

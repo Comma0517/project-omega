@@ -1,4 +1,16 @@
-version: "3.7"
+version: '3.7'
+
+x-omega-vars: &omega-vars
+  AUTH_HOST: 'omega_auth'
+  AUTH_PORT: '80'
+  CORE_HOST: 'omega_core'
+  CORE_PORT: '80'
+  WEATHER_HOST: 'omega_weather'
+  WEATHER_PORT: '80'
+  OMEGA_DEFAULT_DB_HOST: 'omega_mssql'
+  OMEGA_DEFAULT_DB_PORT: '${OMEGA_MSSQL_CONTAINER_PORT}'
+  OMEGA_SEQ_HOST: 'omega_seq'
+  OMEGA_SEQ_INGESTION_PORT: '${OMEGA_SEQ_INGESTION_PORT}'
 
 services:
   omega_web:
@@ -10,20 +22,11 @@ services:
     networks:
       - omega-net
     environment:
-      SERVICE_KEY: "Web"
-      AUTH_HOST: "omega_auth"
-      AUTH_PORT: "80"
-      CORE_HOST: "omega_core"
-      CORE_PORT: "80"
-      WEATHER_HOST: "omega_weather"
-      WEATHER_PORT: "80"
-      DEFAULT_DB_HOST: "omega_mssql"
-      DEFAULT_DB_PORT: "${MSSQL_CONTAINER_PORT}"
-      SEQ_HOST: "${SEQ_HOST}"
-      SEQ_PORT: "${SEQ_PORT}"
+      <<: *omega-vars
+      SERVICE_KEY: 'Web'
     ports:
-      - "5000:80"
-      - "5001:443"
+      - '5000:80'
+      - '5001:443'
   omega_auth:
     image: omega_auth:1.0
     container_name: omega_auth
@@ -33,11 +36,8 @@ services:
     networks:
       - omega-net
     environment:
-      SERVICE_KEY: "Auth"
-      DEFAULT_DB_HOST: "omega_mssql"
-      DEFAULT_DB_PORT: "${MSSQL_CONTAINER_PORT}"
-      SEQ_HOST: "${SEQ_HOST}"
-      SEQ_PORT: "${SEQ_PORT}"
+      <<: *omega-vars
+      SERVICE_KEY: 'Auth'
     expose:
       - 80
       - 443
@@ -50,11 +50,8 @@ services:
     networks:
       - omega-net
     environment:
-      SERVICE_KEY: "Core"
-      DEFAULT_DB_HOST: "omega_mssql"
-      DEFAULT_DB_PORT: "${MSSQL_CONTAINER_PORT}"
-      SEQ_HOST: "${SEQ_HOST}"
-      SEQ_PORT: "${SEQ_PORT}"
+      <<: *omega-vars
+      SERVICE_KEY: 'Core'
     expose:
       - 80
       - 443
@@ -67,11 +64,8 @@ services:
     networks:
       - omega-net
     environment:
-      SERVICE_KEY: "Weather"
-      DEFAULT_DB_HOST: "omega_mssql"
-      DEFAULT_DB_PORT: "${MSSQL_CONTAINER_PORT}"
-      SEQ_HOST: "${SEQ_HOST}"
-      SEQ_PORT: "${SEQ_PORT}"
+      <<: *omega-vars
+      SERVICE_KEY: 'Weather'
     expose:
       - 80
       - 443

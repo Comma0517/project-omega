@@ -9,7 +9,6 @@ namespace Omega.Utils
         {
             if (!File.Exists(filePath))
             {
-                Console.WriteLine("File not found: " + filePath);
                 return;
             }
 

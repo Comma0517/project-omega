@@ -1,30 +1,30 @@
-version: "3.7"
+version: '3.7'
 
 services:
   omega_mssql:
-    image: "mcr.microsoft.com/mssql/server"
+    image: 'mcr.microsoft.com/mssql/server'
     container_name: omega_mssql
     user: root # Maybe not the best idea, but the alternative would be to setup host user and dir permissions, which would be different depending on host OS
     environment:
-      SA_PASSWORD: ${MSSQL_PASSWORD}
-      ACCEPT_EULA: "Y"
+      SA_PASSWORD: '${OMEGA_MSSQL_PASSWORD}'
+      ACCEPT_EULA: 'Y'
     ports:
-      - "${MSSQL_HOST_PORT}:${MSSQL_CONTAINER_PORT}"
+      - '${OMEGA_MSSQL_HOST_PORT}:${OMEGA_MSSQL_CONTAINER_PORT}'
     volumes:
       - ./mssql/data/:/var/opt/mssql/data/
       - ./mssql/log/:/var/opt/mssql/log/
     networks:
       - omega-net
   omega_seq:
-    image: "datalust/seq"
+    image: 'datalust/seq'
     container_name: omega_seq
     environment:
-      ACCEPT_EULA: "Y"
+      ACCEPT_EULA: 'Y'
     volumes:
       - ./seq/data:/data
     ports:
-      - "${OMEGA_SEQ_UI_PORT}:80"
-      - "${OMEGA_SEQ_INGESTION_PORT}:5341"
+      - '${OMEGA_SEQ_UI_PORT}:80'
+      - '${OMEGA_SEQ_INGESTION_PORT}:5341'
     networks:
       - omega-net
 

@@ -29,7 +29,8 @@
     "dockerDepsStop": "yarn gulp dockerDepsStop",
     "dbMigrate": "yarn gulp dbMigrate",
     "dbDropAll": "yarn gulp dbDropAll",
-    "testDbMigrate": "yarn gulp testDbMigrate"
+    "testDbMigrate": "yarn gulp testDbMigrate",
+    "syncEnvFiles": "yarn gulp syncEnvFiles"
   },
   "devDependencies": {
     "@types/gulp": "^4.0.8",

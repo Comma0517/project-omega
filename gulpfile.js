@@ -1,6 +1,6 @@
 const {src, dest, parallel, series} = require('gulp')
 const {spawn, spawnSync} = require('child_process')
-const argv = require('yargs').argv
+const {argv} = require('yargs')
 const path = require('path')
 const rimraf = require('rimraf')
 const fs = require('fs')
@@ -9,13 +9,13 @@ const which = require('which')
 
 const clientAppPath = 'src/services/OmegaService.Web/client-app/'
 const serverAppPath = 'src/Omega/'
+const dbMigratorPath = 'src/libs/Omega.DbMigrator/'
+const dockerDirPath = 'deploy/docker/'
 
-// The project name option prevents warnings about unrelated orphaned containers
-const dockerProjectName = 'omega'
+const dockerProjectName = 'omega' // The docker project name option prevents warnings about unrelated orphaned containers
 const dockerDepsProjectName = 'omega_deps'
 const dockerDepsComposeName = 'docker-compose.deps.yml'
-
-const omegaNetworkName = 'omega-net'
+const dockerNetworkName = 'omega-net'
 
 const spawnOptions = {
   shell: true,
@@ -23,8 +23,8 @@ const spawnOptions = {
   stdio: ['ignore', 'inherit', 'inherit'],
 }
 const spawnOptionsWithInput = {...spawnOptions, stdio: 'inherit'}
-const dockerSpawnOptions = {...spawnOptions, cwd: path.resolve(__dirname, 'deploy/docker')}
-const migratorSpawnOptions = {...spawnOptions, cwd: path.resolve(__dirname, 'src/libs/Omega.DbMigrator/')}
+const dockerSpawnOptions = {...spawnOptions, cwd: path.resolve(__dirname, dockerDirPath)}
+const migratorSpawnOptions = {...spawnOptions, cwd: path.resolve(__dirname, dbMigratorPath)}
 const migratorSpawnOptionsWithInput = {...migratorSpawnOptions, stdio: 'inherit'}
 
 function waitForProcess(childProcess) {
@@ -42,12 +42,88 @@ function waitForProcess(childProcess) {
   })
 }
 
-async function ensureEnvFile(dir) {
-  const envTemplatePath = `${dir}.env.template`
-  const envFilePath = `${dir}.env`
-  if (!fs.existsSync(envFilePath)) {
-    await fsp.copyFile(envTemplatePath, envFilePath)
+function getEnvDictionary(filePath) {
+  let dict = {}
+  fs.readFileSync(filePath).toString().split('\n').forEach(function (line) {
+    if (line && line.indexOf('=') !== -1) {
+      line = line.replace('\r', '').trim()
+      let parts = line.split('=')
+      dict[parts[0].trim()] = parts[1].trim()
+    }
+  })
+  return dict
+}
+
+async function copyEnv(templateDir, templateFilename, envDir, envFilename, overrideAll = true) {
+  await ensureEnvFile(templateDir, templateFilename, envDir, envFilename)
+
+  let templateDict = getEnvDictionary(templateDir + templateFilename)
+  let envDict = getEnvDictionary(envDir + envFilename)
+
+  // Determine what keys are missing from .env that are in template
+  let templateKeys = Object.keys(templateDict)
+  let envKeys = Object.keys(envDict)
+  let missingKeys = templateKeys.filter(k => !envKeys.includes(k))
+
+  if (missingKeys.length > 0) {
+    console.log(`Adding missing keys for ${envDir + envFilename}: `, missingKeys)
   }
+
+  // Merge missing values with existing
+  let newEnvDict = {}
+  for (const [key, value] of Object.entries(overrideAll ? templateDict : envDict)) {
+    newEnvDict[key] = value
+  }
+  for (const key of missingKeys) {
+    newEnvDict[key] = templateDict[key]
+  }
+
+  // Sort
+  let newDictEntries = Object.entries(newEnvDict)
+  let newSortedEntries = newDictEntries.sort((a, b) => {
+    if (a < b) {
+      return -1
+    }
+    if (a > b) {
+      return 1
+    }
+    return 0
+  })
+
+  // Write to .env file
+  let newEnvFileContent = ''
+  for (let kvp of newSortedEntries) {
+    newEnvFileContent += `${kvp[0]}=${kvp[1]}\n`
+  }
+  await fsp.writeFile(envDir + envFilename, newEnvFileContent)
+}
+
+async function ensureEnvFile(templateDir, templateFilename, envDir, envFilename) {
+  const envTemplatePath = `${templateDir}${templateFilename}`
+  const envPath = `${envDir}${envFilename}`
+  if (!fs.existsSync(envPath)) {
+    console.log('Created new env file ' + envPath)
+    await fsp.copyFile(envTemplatePath, envPath)
+  }
+}
+
+async function syncEnvFiles() {
+  const rootTemplateDir = './'
+  const rootServerTemplateFilename = '.env.server.template'
+  const rootClientTemplateFilename = '.env.client.template'
+  const rootEnvDir = './'
+  const rootServerEnvFilename = '.env.server'
+  const rootClientEnvFilename = '.env.client'
+
+  // Copy root .env.[category].template to .env
+  await copyEnv(rootTemplateDir, rootServerTemplateFilename, rootEnvDir, rootServerEnvFilename, false)
+  await copyEnv(rootTemplateDir, rootClientTemplateFilename, rootEnvDir, rootClientEnvFilename, false)
+
+  // Copy root .env.[category] to subdirectory .env files
+  await copyEnv(rootTemplateDir, rootServerEnvFilename, serverAppPath, '.env')
+  await copyEnv(rootTemplateDir, rootServerEnvFilename, dockerDirPath, '.env')
+  await copyEnv(rootTemplateDir, rootServerEnvFilename, dbMigratorPath, '.env')
+  await copyEnv(rootTemplateDir, rootClientEnvFilename, clientAppPath, '.env')
 }
 
 async function yarnInstallClientApp() {
@@ -55,17 +131,9 @@ async function yarnInstallClientApp() {
   return waitForProcess(spawn('yarn', args, spawnOptions))
 }
 
-async function ensureClientAppEnvFile() {
-  return ensureEnvFile(clientAppPath)
-}
-
 async function yarnStartClient() {
   const args = ['--cwd', clientAppPath, 'start']
   return waitForProcess(spawn('yarn', args, spawnOptions))
-}
-
-async function ensureServerAppEnvFile() {
-  return ensureEnvFile(serverAppPath)
 }
 
 async function dotnetWatchRun() {
@@ -83,7 +151,7 @@ async function yarnBuild() {
   return waitForProcess(spawn('yarn', args, spawnOptions))
 }
 
-async function ensureDocker() {
+async function ensureDockerIsRunning() {
   if (!which.sync('docker')) {
     throw Error('docker was not found')
   }
@@ -98,45 +166,45 @@ async function ensureDocker() {
 }
 
 async function dockerBash() {
-  await ensureDocker()
-  const args = ['run', '--rm', '--entrypoint', '"bash"', '-it', `omega_${argv.imageName}:1.0`]
+  await ensureDockerIsRunning()
+  const args = ['run', '--rm', '--entrypoint', '"bash"', '-it', `omega_${argv['imageName']}:1.0`]
   return waitForProcess(spawn('docker', args, spawnOptionsWithInput))
 }
 
 // We're assuming that deps isn't up by the lack of the network created in docker-compose.deps.yml
 async function throwIfDockerDepsNotUp() {
-  await ensureDocker()
+  await ensureDockerIsRunning()
   let childProcess = spawnSync('docker', ['network', 'ls'], {encoding: 'utf8'})
   if (childProcess.error) {
     throw childProcess.error
   }
   console.log('Docker networks:')
   console.log(childProcess.stdout)
-  if (!childProcess.stdout || !childProcess.stdout.includes(omegaNetworkName)) {
-    console.error(`ERROR: docker network ${omegaNetworkName} not found`)
-    throw `docker network ${omegaNetworkName} not found, create using "yarn run dockerDepsUp" or "yarn run dockerDepsUpDetached"`
+  if (!childProcess.stdout || !childProcess.stdout.includes(dockerNetworkName)) {
+    console.error(`ERROR: docker network ${dockerNetworkName} not found`)
+    throw `docker network ${dockerNetworkName} not found, create using "yarn run dockerDepsUp" or "yarn run dockerDepsUpDetached"`
   } else {
-    console.log(`docker network ${omegaNetworkName} found`)
+    console.log(`docker network ${dockerNetworkName} found`)
   }
 }
 
 async function dockerBuild() {
-  await ensureDocker()
+  await ensureDockerIsRunning()
   return waitForProcess(spawn('docker-compose', ['--project-name', dockerProjectName, 'build', '--no-cache'], dockerSpawnOptions))
 }
 
 async function dockerUp() {
-  await ensureDocker()
+  await ensureDockerIsRunning()
   return waitForProcess(spawn('docker-compose', ['--project-name', dockerProjectName, 'up'], dockerSpawnOptions))
 }
 
 async function dockerDown() {
-  await ensureDocker()
+  await ensureDockerIsRunning()
   return waitForProcess(spawn('docker-compose', ['--project-name', dockerProjectName, 'down'], dockerSpawnOptions))
 }
 
 async function dockerStop() {
-  await ensureDocker()
+  await ensureDockerIsRunning()
   return waitForProcess(spawn('docker-compose', ['--project-name', dockerProjectName, 'stop'], dockerSpawnOptions))
 }
 
@@ -155,49 +223,41 @@ async function copyPublishedToDockerDir() {
 }
 
 async function dockerStandaloneBuild() {
-  await ensureDocker()
+  await ensureDockerIsRunning()
   const args = ['build', '-f', 'Dockerfile.standalone', '-t', 'omega_standalone:1.0', '.']
   return waitForProcess(spawn('docker', args, dockerSpawnOptions))
 }
 
 async function dockerStandaloneRun() {
-  await ensureDocker()
+  await ensureDockerIsRunning()
   // Note that running docker as a gulp command disallows passing the -t command since that would try to configure the terminal
   const args = ['run', '-i', '--rm', '-p', '5000:80', 'omega_standalone:1.0']
   return waitForProcess(spawn('docker', args, dockerSpawnOptions))
 }
 
-async function ensureDockerEnvFile() {
-  return ensureEnvFile('./deploy/docker/')
-}
-
 async function dockerDepsUp() {
-  await ensureDocker()
+  await ensureDockerIsRunning()
   return waitForProcess(spawn('docker-compose', ['--project-name', dockerDepsProjectName, '-f', dockerDepsComposeName, 'up'], dockerSpawnOptions))
 }
 
 async function dockerDepsUpDetached() {
-  await ensureDocker()
+  await ensureDockerIsRunning()
   return waitForProcess(spawn('docker-compose', ['--project-name', dockerDepsProjectName, '-f', dockerDepsComposeName, 'up', '-d'], dockerSpawnOptions))
 }
 
 async function dockerDepsDown() {
-  await ensureDocker()
+  await ensureDockerIsRunning()
   return waitForProcess(spawn('docker-compose', ['--project-name', dockerDepsProjectName, '-f', dockerDepsComposeName, 'down'], dockerSpawnOptions))
 }
 
 async function dockerDepsStop() {
-  await ensureDocker()
+  await ensureDockerIsRunning()
   return waitForProcess(spawn('docker-compose', ['--project-name', dockerDepsProjectName, '-f', dockerDepsComposeName, 'stop'], dockerSpawnOptions))
 }
 
 async function deleteMigratorPublishDir() {
   const rootMigratorPublishPath = path.join(__dirname, 'src/libs/Omega.DbMigrator/publish/')
   await new Promise(resolve => rimraf(`${rootMigratorPublishPath}*`, resolve))
-}
-
-async function ensureDbMigratorEnvFile() {
-  return ensureEnvFile('./src/libs/Omega.DbMigrator/')
 }
 
 async function publishMigrator() {
@@ -220,13 +280,13 @@ const build = parallel(dotnetPublish, yarnBuild)
 
 // Runs yarn install on client app while also copying client-app .env.template to .env.
 // Add other initial setup tasks here when they're needed.
-exports.initialInstall = parallel(yarnInstallClientApp, ensureClientAppEnvFile, ensureServerAppEnvFile, ensureDbMigratorEnvFile, ensureDockerEnvFile)
+exports.initialInstall = parallel(yarnInstallClientApp, syncEnvFiles)
 
 // Run client app
-exports.startClient = series(ensureClientAppEnvFile, yarnStartClient)
+exports.startClient = series(syncEnvFiles, yarnStartClient)
 
 // Run dotnet server app
-exports.startServer = series(ensureServerAppEnvFile, dotnetWatchRun)
+exports.startServer = series(syncEnvFiles, dotnetWatchRun)
 
 // Run dotnet publish and yarn build in parallel.
 exports.build = build
@@ -258,12 +318,15 @@ exports.dockerStandaloneBuild = dockerStandaloneBuild
 exports.dockerStandaloneRun = series(throwIfDockerDepsNotUp, dockerStandaloneRun)
 
 // Docker dependency operations
-exports.dockerDepsUp = series(ensureDockerEnvFile, dockerDepsUp)
-exports.dockerDepsUpDetached = series(ensureDockerEnvFile, dockerDepsUpDetached)
+exports.dockerDepsUp = series(syncEnvFiles, dockerDepsUp)
+exports.dockerDepsUpDetached = series(syncEnvFiles, dockerDepsUpDetached)
 exports.dockerDepsDown = dockerDepsDown
 exports.dockerDepsStop = dockerDepsStop
 
 // DB operations
-exports.dbMigrate = series(throwIfDockerDepsNotUp, parallel(ensureDbMigratorEnvFile, deleteMigratorPublishDir), publishMigrator, runDbMigrator)
-exports.dbDropAll = series(throwIfDockerDepsNotUp, parallel(ensureDbMigratorEnvFile, deleteMigratorPublishDir), publishMigrator, dbDropAll)
-exports.testDbMigrate = series(throwIfDockerDepsNotUp, parallel(ensureDbMigratorEnvFile, deleteMigratorPublishDir), publishMigrator, testDbMigrate)
+exports.dbMigrate = series(throwIfDockerDepsNotUp, parallel(syncEnvFiles, deleteMigratorPublishDir), publishMigrator, runDbMigrator)
+exports.dbDropAll = series(throwIfDockerDepsNotUp, parallel(syncEnvFiles, deleteMigratorPublishDir), publishMigrator, dbDropAll)
+exports.testDbMigrate = series(throwIfDockerDepsNotUp, parallel(syncEnvFiles, deleteMigratorPublishDir), publishMigrator, testDbMigrate)
+
+// Create .env files if they don't exist and adds any new key value pairs. Also changes existing values in subdirectory .env files if non-template values have changed.
+exports.syncEnvFiles = syncEnvFiles

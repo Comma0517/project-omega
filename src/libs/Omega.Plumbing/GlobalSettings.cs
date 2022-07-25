@@ -10,16 +10,16 @@ namespace Omega.Plumbing
         [SettingInfo(ShouldLogValue = true)] SERVICE_KEY,
 
         [SettingInfo(DefaultValue = "localhost", DefaultForEnvironment = DefaultSettingForEnvironment.LocalOnly, ShouldLogValue = true)]
-        DEFAULT_DB_HOST,
+        OMEGA_DEFAULT_DB_HOST,
 
         [SettingInfo(DefaultValue = "1433", DefaultForEnvironment = DefaultSettingForEnvironment.LocalOnly, ShouldLogValue = true)]
-        DEFAULT_DB_PORT,
+        OMEGA_DEFAULT_DB_PORT,
 
         [SettingInfo(DefaultValue = "sa", DefaultForEnvironment = DefaultSettingForEnvironment.LocalOnly)]
-        DEFAULT_DB_USER,
+        OMEGA_DEFAULT_DB_USER,
 
         [SettingInfo(DefaultValue = "Abc1234!", DefaultForEnvironment = DefaultSettingForEnvironment.LocalOnly)]
-        DEFAULT_DB_PASS,
+        OMEGA_DEFAULT_DB_PASS,
 
         [SettingInfo(DefaultValue = "localhost", ShouldLogValue = true, DefaultForEnvironment = DefaultSettingForEnvironment.LocalOnly)]
         CORE_HOST,

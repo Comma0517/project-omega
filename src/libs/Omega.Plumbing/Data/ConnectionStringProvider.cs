@@ -1,15 +1,10 @@
 using EnvironmentSettings.Interface;
-using EnvironmentSettings.Logic;
 
 namespace Omega.Plumbing.Data
 {
     public class ConnectionStringProvider : IConnectionStringProvider
     {
         private readonly IEnvSettings _envSettings;
-        private const string ENV_KEY_DB_HOST = "DEFAULT_DB_HOST";
-        private const string ENV_KEY_DB_PORT = "DEFAULT_DB_PORT";
-        private const string ENV_KEY_DB_USER = "DEFAULT_DB_USER";
-        private const string ENV_KEY_DB_PASS = "DEFAULT_DB_PASS";
         
         public ConnectionStringProvider(IEnvSettings envSettings)
         {
@@ -23,10 +18,10 @@ namespace Omega.Plumbing.Data
 
         public string GetConnectionString(string dbName)
         {
-            var host = _envSettings.GetString(ENV_KEY_DB_HOST);
-            var port = _envSettings.GetString(ENV_KEY_DB_PORT);
-            var user = _envSettings.GetString(ENV_KEY_DB_USER);
-            var pass = _envSettings.GetString(ENV_KEY_DB_PASS);
+            var host = _envSettings.GetString(GlobalSettings.OMEGA_DEFAULT_DB_HOST);
+            var port = _envSettings.GetString(GlobalSettings.OMEGA_DEFAULT_DB_PORT);
+            var user = _envSettings.GetString(GlobalSettings.OMEGA_DEFAULT_DB_USER);
+            var pass = _envSettings.GetString(GlobalSettings.OMEGA_DEFAULT_DB_PASS);
             return GetConnectionString(dbName, host, port, user, pass);
         }
     }
