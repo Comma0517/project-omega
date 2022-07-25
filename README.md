@@ -28,14 +28,14 @@ My impression is that many industry experts would have us believe that these are
 
 - Monolith
 - Microservices
-- "Hybrid" (monolith with some microservices)
+- "Hybrid" (not really a hybrid, both a monolith and also some microservices)
 
 I want to show that we don't have to pick any of these options. With a little creativity we can have a true "hybrid" that is both a monolith and a set of microservices. With my current strategy I don't think we can eliminate all the downsides of monolith and microservices, but we can get rid of many of the pain points of both.
 
 ## What It Is Not
 
 - I'm not trying to create a framework (not yet at least...). I'm just putting together all the legos I have into a different configuration as an experiment.
-- This is not meant to be a community project. I won't be taking pull requests. It's my own personal experiment that I intend to make frequent dramatic breaking changes to without notice. If this concept seems interesting to you and you have suggestions, feel free to fork the repo and try out your ideas yourself.
+- This is not meant to be a community project. I intend to make frequent dramatic breaking changes without notice. If this concept seems interesting to you and you'd like to contribute, contact me first.
 
 ## Project Goals
 
@@ -109,14 +109,22 @@ Note that getting the latest version of docker running on windows may require so
 
 Steps:
 
-- Clone this repo.
+- Clone this repo
 - In a terminal from repo root, run `yarn run installAll`
-- Start the dependencies - currently this is just an MSSQL DB running in docker - using the command `yarn run dockerDepsUpDetached`. To change the port to use for DB access, modify .env in `src/Omega` and `src/libs/Omega.DbMigrator/` (copy `.env.template` to `.env` if it doesn't exist).
+- If you want to run SQL server on a port other than 1434:
+  - Run `yarn run syncEnvFiles`
+  - Change `OMEGA_DEFAULT_DB_PORT` and `OMEGA_MSSQL_HOST_PORT` in `.env.server`
+- Start the dependencies using the command `yarn run dockerDepsUpDetached`
 - Run DB migrations the first time you run, or when you get someone elses changes with database updates: `yarn run dbMigrate`
 - Run the app in local development mode using one of these options:
   - Option 1: in a terminal from repo root run `yarn run both` (this uses concurrently to run the commands from options 2)
   - Option 2: use 2 separate terminals. In one terminal run `yarn run client` and in the other run `yarn run server`
 - Access [http://localhost:3000](http://localhost:3000)
+
+Before running unit tests with `dotnet test` the first time or after adding unit tests on new DB schema:
+- Start dependencies if not already running with `yarn run dockerDepsUpDetached`
+- Run `yarn run testDbMigrate`
+- Then run `dotnet test`
 
 To simulate production and microservices in docker:
 
@@ -126,7 +134,9 @@ To simulate production and microservices in docker:
 
 ## Next Steps
 
-- Setup logging abstraction to allow us to add structured logging with a correlation ID for inter-service calls (will use Serilog)
+- Logging changes
+  - Experiment with Serilog json formatter
+  - Add correlation ID and other contextual info to log entries
 - Add additional documentation
   - Diagrams of how docker simulation works
   - Docker dependencies
@@ -143,7 +153,6 @@ To simulate production and microservices in docker:
 - Auth implementation
   - Front-end site registration
   - Service to service auth (OAuth?)
-- Address issue with needing to modify several .env files to change DB port to use
 - Automatic documentation generation (swagger and html xml documentation output)
 - Queue setup and worker process services
   - Abstract queue definition (to allow using cloud services as an option)
@@ -152,6 +161,7 @@ To simulate production and microservices in docker:
   - RabbitMQ basic implementation wired up to worker process service
 - Additional local kubernetes demo work
   - Database will probably require learning how to use a kubernetes persistent volume, unless I can figure out how to adjust networking to expose the host DB
+  - Add Seq or make Seq functionality optional and don't use it when running in kubernetes
 - Meta project/script to analyze solution
   - Analyze affected services based on files changed (for granularity of deployment)
 - Project scaffolding:
