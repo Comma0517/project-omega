@@ -6,12 +6,11 @@ FROM mcr.microsoft.com/dotnet/aspnet:5.0
 
 RUN echo "alias ll='ls -al --color'" >> ~/.bashrc
 
-# The wildcard skips copying subdirectories, strangely enough...
 COPY ./built_server_app/ app/
+COPY aspnetapp.pfx app/
 
 WORKDIR /app
 
-EXPOSE 80
 EXPOSE 443
 
 ENTRYPOINT ["dotnet", "Omega.dll"]

@@ -99,7 +99,7 @@ namespace Omega.Plumbing
             {
                 var hostEnvKey = $"{serviceKey.ToUpper()}_HOST";
                 var portEnvKey = $"{serviceKey.ToUpper()}_PORT";
-                client.BaseAddress = new Uri($"http://{envSettings.GetString(hostEnvKey)}:{envSettings.GetString(portEnvKey)}/");
+                client.BaseAddress = new Uri($"https://{envSettings.GetString(hostEnvKey)}:{envSettings.GetString(portEnvKey)}/");
                 client.DefaultRequestHeaders.Add(OmegaGlobalConstants.INTER_SERVICE_HEADER_KEY, "true");
             }).ConfigureHttpMessageHandlerBuilder(builder =>
             {

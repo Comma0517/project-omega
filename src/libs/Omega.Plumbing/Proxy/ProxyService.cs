@@ -14,7 +14,8 @@ namespace Omega.Plumbing.Proxy
             }
 
             Options = options.Value;
-            Client = new HttpClient(Options.MessageHandler ?? new HttpClientHandler {AllowAutoRedirect = false, UseCookies = false});
+            Client = new HttpClient(Options.MessageHandler ?? new HttpClientHandler
+                {AllowAutoRedirect = false, UseCookies = false, ServerCertificateCustomValidationCallback = (m, c, ch, e) => true});
         }
 
         public SharedProxyOptions Options { get; }

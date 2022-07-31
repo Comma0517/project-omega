@@ -30,7 +30,8 @@
     "dbMigrate": "yarn gulp dbMigrate",
     "dbDropAll": "yarn gulp dbDropAll",
     "testDbMigrate": "yarn gulp testDbMigrate",
-    "syncEnvFiles": "yarn gulp syncEnvFiles"
+    "syncEnvFiles": "yarn gulp syncEnvFiles",
+    "dotnetDevCerts": "dotnet dev-certs https --trust"
   },
   "devDependencies": {
     "@types/gulp": "^4.0.8",

@@ -119,7 +119,7 @@ Steps:
 - Run the app in local development mode using one of these options:
   - Option 1: in a terminal from repo root run `yarn run both` (this uses concurrently to run the commands from options 2)
   - Option 2: use 2 separate terminals. In one terminal run `yarn run client` and in the other run `yarn run server`
-- Access [http://localhost:3000](http://localhost:3000)
+- Access [https://localhost:3000](https://localhost:3000) (click past https warning)
 
 Before running unit tests with `dotnet test` the first time or after adding unit tests on new DB schema:
 - Start dependencies if not already running with `yarn run dockerDepsUpDetached`
@@ -130,7 +130,7 @@ To simulate production and microservices in docker:
 
 - Ensure docker dependencies are running with `yarn run dockerDepsUpDetached`
 - In a terminal from repo root, run `yarn run dockerRecreateFull`
-- Access [http://localhost:5000](http://localhost:5000)
+- Access [https://localhost:3000](https://localhost:3000) (click past https warning)
 
 ## Next Steps
 
@@ -146,10 +146,6 @@ To simulate production and microservices in docker:
   - DB migrations
 - RPC test between services instead of http rest calls (maybe with something like this: [https://github.com/aspnet/AspLabs/tree/main/src/GrpcHttpApi](https://github.com/aspnet/AspLabs/tree/main/src/GrpcHttpApi))
 - Add to inter-service client base class to abstract error handling and logging
-- HTTPS setup
-  - Local setup running normally as standalone application
-  - Local kubernetes test with HTTPS working between containers
-  - Azure Container Instance deployment setup using Let's Encrypt certificate
 - Auth implementation
   - Front-end site registration
   - Service to service auth (OAuth?)

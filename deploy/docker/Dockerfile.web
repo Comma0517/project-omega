@@ -6,12 +6,12 @@ FROM mcr.microsoft.com/dotnet/aspnet:5.0
 RUN echo "alias ll='ls -al --color'" >> ~/.bashrc
 
 COPY ./built_server_app/ app/
+COPY aspnetapp.pfx app/
 RUN mkdir -p app/client-app/build
 COPY ./built_client_app/ app/client-app/build/
 
 WORKDIR /app
 
-EXPOSE 80
 EXPOSE 443
 
 ENTRYPOINT ["dotnet", "Omega.dll"]

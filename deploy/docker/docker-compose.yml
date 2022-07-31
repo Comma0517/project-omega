@@ -1,16 +1,22 @@
 version: '3.7'
 
 x-omega-vars: &omega-vars
+  ASPNETCORE_ENVIRONMENT: 'Production'
   AUTH_HOST: 'omega_auth'
-  AUTH_PORT: '80'
+  AUTH_PORT: '443'
   CORE_HOST: 'omega_core'
-  CORE_PORT: '80'
+  CORE_PORT: '443'
   WEATHER_HOST: 'omega_weather'
-  WEATHER_PORT: '80'
+  WEATHER_PORT: '443'
+  OMEGA_DEFAULT_DB_USER: 'sa'
+  OMEGA_DEFAULT_DB_PASS: 'Abc1234!'
   OMEGA_DEFAULT_DB_HOST: 'omega_mssql'
   OMEGA_DEFAULT_DB_PORT: '${OMEGA_MSSQL_CONTAINER_PORT}'
   OMEGA_SEQ_HOST: 'omega_seq'
   OMEGA_SEQ_INGESTION_PORT: '${OMEGA_SEQ_INGESTION_PORT}'
+  ASPNETCORE_URLS: 'https://+:443'
+  ASPNETCORE_Kestrel__Certificates__Default__Password: 'devcertpass'
+  ASPNETCORE_Kestrel__Certificates__Default__Path: 'aspnetapp.pfx'
 
 services:
   omega_web:
@@ -25,8 +31,7 @@ services:
       <<: *omega-vars
       SERVICE_KEY: 'Web'
     ports:
-      - '5000:80'
-      - '5001:443'
+      - '3000:443'
   omega_auth:
     image: omega_auth:1.0
     container_name: omega_auth
@@ -39,7 +44,6 @@ services:
       <<: *omega-vars
       SERVICE_KEY: 'Auth'
     expose:
-      - 80
       - 443
   omega_core:
     image: omega_core:1.0
@@ -53,7 +57,6 @@ services:
       <<: *omega-vars
       SERVICE_KEY: 'Core'
     expose:
-      - 80
       - 443
   omega_weather:
     image: omega_weather:1.0
@@ -67,7 +70,6 @@ services:
       <<: *omega-vars
       SERVICE_KEY: 'Weather'
     expose:
-      - 80
       - 443
       
 networks:

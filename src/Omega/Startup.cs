@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Omega.Plumbing;
 using Omega.Plumbing.Http;
 using Omega.Plumbing.Middleware;
@@ -71,6 +72,14 @@ namespace Omega
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             PopulateAllServiceUrlPrefixes();
+            
+            if (!env.IsDevelopment())
+            {
+                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                // app.UseHsts();
+            }
+
+            app.UseHttpsRedirection();
 
             _omegaServiceRegistration.ConfigureBeforeRouting(app, env);
 
