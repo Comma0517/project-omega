@@ -12,7 +12,6 @@
     <ProjectReference Include="..\services\OmegaService.Auth\OmegaService.Auth.csproj" />
     <ProjectReference Include="..\services\OmegaService.Core\OmegaService.Core.csproj" />
     <ProjectReference Include="..\services\OmegaService.Web\OmegaService.Web.csproj" />
-    <ProjectReference Include="..\libs\EnvironmentSettings\EnvironmentSettings.csproj" />
     <ProjectReference Include="..\libs\Omega.Utils\Omega.Utils.csproj" />
   </ItemGroup>
 

@@ -6,6 +6,7 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\EnvironmentSettings\EnvironmentSettings.csproj" />
+    <PackageReference Include="MikeyT.EnvironmentSettings" Version="0.1.4-alpha" />
+    <PackageReference Include="Serilog" Version="2.10.0" />
   </ItemGroup>
 </Project>

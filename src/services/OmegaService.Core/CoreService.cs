@@ -1,6 +1,6 @@
 using System.Reflection;
-using EnvironmentSettings.Interface;
 using Microsoft.Extensions.DependencyInjection;
+using MikeyT.EnvironmentSettingsNS.Interface;
 using Omega.Plumbing;
 using Omega.Plumbing.Data;
 using OmegaService.Core.Data;
@@ -16,7 +16,7 @@ namespace OmegaService.Core
         {
         }
 
-        public override void ConfigureServices(IServiceCollection services, IEnvSettings envSettings)
+        public override void ConfigureServices(IServiceCollection services, IEnvironmentSettings envSettings)
         {
             base.ConfigureServices(services, envSettings);
 

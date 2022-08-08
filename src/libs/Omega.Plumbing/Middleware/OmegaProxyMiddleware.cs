@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using EnvironmentSettings.Interface;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
+using MikeyT.EnvironmentSettingsNS.Interface;
 using Omega.Plumbing.Http;
 using Serilog;
 
@@ -15,14 +15,14 @@ namespace Omega.Plumbing.Middleware
     {
         private readonly RequestDelegate _next;
         private readonly OmegaServiceRegistration _omegaServiceRegistration;
-        private readonly IEnvSettings _envSettings;
+        private readonly IEnvironmentSettings _envSettings;
         private readonly List<string> _urlPrefixesToProxy;
         private readonly ILogger _logger;
 
         public OmegaProxyMiddleware(
             RequestDelegate next,
             OmegaServiceRegistration omegaServiceRegistration,
-            IEnvSettings envSettings,
+            IEnvironmentSettings envSettings,
             List<string> urlPrefixesToProxy)
         {
             _next = next;
@@ -66,7 +66,7 @@ namespace Omega.Plumbing.Middleware
         public static IApplicationBuilder UseOmegaProxy(
             this IApplicationBuilder builder,
             OmegaServiceRegistration omegaServiceRegistration,
-            IEnvSettings envSettings,
+            IEnvironmentSettings envSettings,
             List<string> urlPrefixesToProxy)
         {
             return builder.UseMiddleware<OmegaProxyMiddleware>(omegaServiceRegistration, envSettings, urlPrefixesToProxy);

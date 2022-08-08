@@ -1,6 +1,6 @@
 using System.Reflection;
-using EnvironmentSettings.Interface;
 using Microsoft.Extensions.DependencyInjection;
+using MikeyT.EnvironmentSettingsNS.Interface;
 using Omega.Plumbing;
 using Omega.Plumbing.Data;
 using OmegaService.Weather.Interface;
@@ -16,7 +16,7 @@ namespace OmegaService.Weather
         {
         }
 
-        public override void ConfigureServices(IServiceCollection services, IEnvSettings envSettings)
+        public override void ConfigureServices(IServiceCollection services, IEnvironmentSettings envSettings)
         {
             base.ConfigureServices(services, envSettings);
             _logger.Information("Initializing Weather POS");

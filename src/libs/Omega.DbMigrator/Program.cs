@@ -6,16 +6,16 @@ using System.Reflection;
 using Dapper;
 using DbUp;
 using DbUp.Engine;
-using EnvironmentSettings.Logic;
+using MikeyT.EnvironmentSettingsNS.Interface;
+using MikeyT.EnvironmentSettingsNS.Logic;
 using Omega.Plumbing;
 using Omega.Plumbing.Data;
-using Omega.Utils;
 
 namespace Omega.DbMigrator
 {
     class Program
     {
-        private static readonly EnvSettings _envSettings = new(new EnvironmentVariableProvider());
+        private static readonly IEnvironmentSettings _envSettings = new EnvironmentSettings(new EnvironmentVariableProvider());
         private static readonly ConnectionStringProvider _connStringProvider = new(_envSettings);
 
         static int Main(string[] args)

@@ -1,5 +1,5 @@
-using EnvironmentSettings.Attributes;
-using EnvironmentSettings.Enums;
+using MikeyT.EnvironmentSettingsNS.Attributes;
+using MikeyT.EnvironmentSettingsNS.Enums;
 
 namespace Omega.Plumbing
 {

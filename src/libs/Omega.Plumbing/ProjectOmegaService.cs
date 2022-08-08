@@ -2,11 +2,11 @@
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
-using EnvironmentSettings.Interface;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using MikeyT.EnvironmentSettingsNS.Interface;
 using Serilog;
 
 namespace Omega.Plumbing
@@ -41,7 +41,7 @@ namespace Omega.Plumbing
         }
 
         // Opportunity to wire up dependency injection
-        public virtual void ConfigureServices(IServiceCollection services, IEnvSettings envSettings)
+        public virtual void ConfigureServices(IServiceCollection services, IEnvironmentSettings envSettings)
         {
             LogEnvSettings(envSettings, ServiceKey);
         }
@@ -64,7 +64,7 @@ namespace Omega.Plumbing
         {
         }
 
-        private void LogEnvSettings(IEnvSettings envSettings, string serviceKey)
+        private void LogEnvSettings(IEnvironmentSettings envSettings, string serviceKey)
         {
             if (serviceKey != null && envSettings.GetString(GlobalSettings.SERVICE_KEY, null) == serviceKey)
             {
@@ -75,7 +75,7 @@ namespace Omega.Plumbing
 
     public static class ProjectOmegaExtensions
     {
-        public static void AddOmegaHttpClient<TClient, TImplementation>(this IServiceCollection services, string serviceKey, IEnvSettings envSettings)
+        public static void AddOmegaHttpClient<TClient, TImplementation>(this IServiceCollection services, string serviceKey, IEnvironmentSettings envSettings)
             where TClient : class
             where TImplementation : class, TClient
         {

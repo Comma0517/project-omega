@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using EnvironmentSettings.Interface;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using MikeyT.EnvironmentSettingsNS.Interface;
 using Serilog;
 
 namespace Omega.Plumbing
@@ -71,7 +71,7 @@ namespace Omega.Plumbing
             return _omegaServices;
         }
 
-        public void InitOmegaServices(IServiceCollection appServices, IEnvSettings envSettings)
+        public void InitOmegaServices(IServiceCollection appServices, IEnvironmentSettings envSettings)
         {
             _logger.Information(OmegaGlobalConstants.LOG_LINE_SEPARATOR + "Initializing Omega Services...\n");
 
@@ -133,7 +133,7 @@ namespace Omega.Plumbing
             return _allServiceKeys;
         }
         
-        public Uri GetProxyUri(Uri originalUri, IEnvSettings envSettings)
+        public Uri GetProxyUri(Uri originalUri, IEnvironmentSettings envSettings)
         {
             _logger.Debug("Proxy original path: {OriginalPath}", originalUri);
             if (originalUri == null)

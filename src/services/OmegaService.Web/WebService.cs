@@ -1,8 +1,8 @@
 using System.Reflection;
-using EnvironmentSettings.Interface;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using MikeyT.EnvironmentSettingsNS.Interface;
 using Omega.Plumbing;
 using OmegaInterop.Core;
 using OmegaInterop.Weather;
@@ -16,7 +16,7 @@ namespace OmegaService.Web
         {
         }
 
-        public override void ConfigureServices(IServiceCollection services, IEnvSettings envSettings)
+        public override void ConfigureServices(IServiceCollection services, IEnvironmentSettings envSettings)
         {
             base.ConfigureServices(services, envSettings);
             envSettings.AddSettings<WebEnvSettings>();

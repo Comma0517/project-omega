@@ -1,12 +1,12 @@
-using EnvironmentSettings.Interface;
+using MikeyT.EnvironmentSettingsNS.Interface;
 
 namespace Omega.Plumbing.Data
 {
     public class TestConnectionStringProvider : IConnectionStringProvider
     {
         private readonly ConnectionStringProvider _connectionStringProvider;
-        
-        public TestConnectionStringProvider(IEnvSettings envSettings)
+
+        public TestConnectionStringProvider(IEnvironmentSettings envSettings)
         {
             _connectionStringProvider = new ConnectionStringProvider(envSettings);
         }

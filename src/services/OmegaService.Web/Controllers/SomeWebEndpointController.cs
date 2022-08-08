@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using EnvironmentSettings.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using MikeyT.EnvironmentSettingsNS.Interface;
 using OmegaInterop.Core;
 using OmegaInterop.Weather;
 
@@ -18,7 +18,7 @@ namespace OmegaService.Web.Controllers
 
         public SomeWebEndpointController(
             ILogger<SomeWebEndpointController> logger,
-            IEnvSettings envSettings,
+            IEnvironmentSettings envSettings,
             IWeatherClient weatherClient,
             ICoreClient coreClient)
         {

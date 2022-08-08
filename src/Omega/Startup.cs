@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using EnvironmentSettings.Interface;
-using EnvironmentSettings.Logic;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -10,6 +8,8 @@ using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MikeyT.EnvironmentSettingsNS.Interface;
+using MikeyT.EnvironmentSettingsNS.Logic;
 using Omega.Plumbing;
 using Omega.Plumbing.Http;
 using Omega.Plumbing.Middleware;
@@ -19,7 +19,7 @@ namespace Omega
 {
     public class Startup
     {
-        private EnvSettings _envSettings;
+        private IEnvironmentSettings _envSettings;
         private readonly OmegaServiceRegistration _omegaServiceRegistration = new();
         private string _serviceKey;
         private List<string> _allNonWebServiceUrlPrefixes;
@@ -39,11 +39,11 @@ namespace Omega
         {
             _logger = Log.ForContext<Startup>();
 
-            var envSettings = new EnvSettings(new EnvironmentVariableProvider());
+            var envSettings = new EnvironmentSettings(new EnvironmentVariableProvider());
             envSettings.AddSettings<GlobalSettings>();
             _envSettings = envSettings;
 
-            services.AddSingleton<IEnvSettings>(envSettings);
+            services.AddSingleton<IEnvironmentSettings>(envSettings);
 
             _serviceKey = envSettings.GetString(GlobalSettings.SERVICE_KEY, null);
             if (_serviceKey == null)

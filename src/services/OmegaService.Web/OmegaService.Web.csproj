@@ -13,7 +13,6 @@
     <ProjectReference Include="..\..\interop\OmegaInterop.Auth\OmegaInterop.Auth.csproj" />
     <ProjectReference Include="..\..\interop\OmegaInterop.Core\OmegaInterop.Core.csproj" />
     <ProjectReference Include="..\..\interop\OmegaInterop.Weather\OmegaInterop.Weather.csproj" />
-    <ProjectReference Include="..\..\libs\EnvironmentSettings\EnvironmentSettings.csproj" />
     <ProjectReference Include="..\..\libs\Omega.Plumbing\Omega.Plumbing.csproj" />
     <ProjectReference Include="..\..\libs\RandomStuff\RandomStuff.csproj" />
   </ItemGroup>
