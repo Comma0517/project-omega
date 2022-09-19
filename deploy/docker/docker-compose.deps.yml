@@ -4,7 +4,6 @@ services:
   omega_mssql:
     image: 'mcr.microsoft.com/mssql/server'
     container_name: omega_mssql
-    user: root # Maybe not the best idea, but the alternative would be to setup host user and dir permissions, which would be different depending on host OS
     environment:
       SA_PASSWORD: '${OMEGA_MSSQL_PASSWORD}'
       ACCEPT_EULA: 'Y'

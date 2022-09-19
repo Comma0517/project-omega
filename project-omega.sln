@@ -43,6 +43,21 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "services", "services", "{8B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OmegaService.Core.Tests", "tests\services\OmegaService.Core.Tests\OmegaService.Core.Tests.csproj", "{82AD5540-B092-47AC-8EFF-4536390536EB}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{FCF2EFEC-574B-41FD-BA0C-7917FDB99242}"
+ProjectSection(SolutionItems) = preProject
+	.editorconfig = .editorconfig
+	.env.client = .env.client
+	.env.client.template = .env.client.template
+	.env.server = .env.server
+	.env.server.template = .env.server.template
+	.gitignore = .gitignore
+	gulpfile.js = gulpfile.js
+	LICENSE = LICENSE
+	package.json = package.json
+	project-omega.sln = project-omega.sln
+	README.md = README.md
+EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

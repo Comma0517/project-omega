@@ -9,7 +9,5 @@ project-omega.sln.DotSettings.user
 .env.client
 deploy/docker/built_server_app
 deploy/docker/built_client_app
-deploy/docker/mssql/data
-deploy/docker/mssql/log
 deploy/docker/seq/data
 src/libs/Omega.DbMigrator/publish
