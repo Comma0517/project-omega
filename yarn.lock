@@ -23,10 +23,10 @@
     chalk "^2.0.0"
     js-tokens "^4.0.0"
 
-"@mikeyt23/gulp-utils@^1.1.1":
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/@mikeyt23/gulp-utils/-/gulp-utils-1.1.1.tgz#3491001d7f7994d2a2f3766067d78b2b031a7a0e"
-  integrity sha512-vUjc0uSm5OZmEfVZ1nLCDUXcbkaGpktmNOgYRgmrxI+kZWiMlPsLGytM4P0HlvbUhYy4mFnSXWFlrwPIpZlqHA==
+"@mikeyt23/gulp-utils@^1.1.2":
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/@mikeyt23/gulp-utils/-/gulp-utils-1.1.2.tgz#81d072c0566c11f2d3140c69d4ed80f5f5e5549a"
+  integrity sha512-HiS4AMESmF+0KAgkUZfaHQ6KaJu7Zj68L0JAZkOKx8PI2eXGxNwG4pYlSi1P0c6tPXjMU9cVgj4d1XsI5aMZ1A==
   dependencies:
     which "^2.0.2"
 

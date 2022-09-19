@@ -25,8 +25,10 @@ const dockerProjectName = 'omega' // The docker project name option prevents war
 const dockerDepsProjectName = 'omega_deps'
 const dockerDepsComposeName = 'docker-compose.deps.yml'
 
-const spawnOptions = {...defaultSpawnOptions}
+const spawnOptions = {...defaultSpawnOptions, cwd: __dirname}
 const dockerSpawnOptions = {...spawnOptions, cwd: path.resolve(__dirname, dockerDirPath)}
+const clientSpawnOptions = {...spawnOptions, cwd: path.resolve(__dirname, clientAppPath)}
+const serverAppSpawnOptions = {...spawnOptions, cwd: path.resolve(__dirname, serverAppPath)}
 const migratorSpawnOptions = {...spawnOptions, cwd: path.resolve(__dirname, dbMigratorPath)}
 const migratorSpawnOptionsWithInput = {...migratorSpawnOptions, stdio: 'inherit'}
 
@@ -58,18 +60,15 @@ async function deleteEnvFiles() {
 }
 
 async function yarnInstallClientApp() {
-  const args = ['--cwd', clientAppPath, 'install']
-  return waitForProcess(spawn('yarn', args, spawnOptions))
+  return waitForProcess(spawn('yarn', ['install'], clientSpawnOptions))
 }
 
 async function yarnStartClient() {
-  const args = ['--cwd', clientAppPath, 'start']
-  return waitForProcess(spawn('yarn', args, spawnOptions))
+  return waitForProcess(spawn('yarn', ['start'], clientSpawnOptions))
 }
 
 async function dotnetWatchRun() {
-  const args = ['watch', '-p', serverAppPath, 'run']
-  return waitForProcess(spawn('dotnet', args, spawnOptions))
+  return waitForProcess(spawn('dotnet', ['watch', 'run'], serverAppSpawnOptions))
 }
 
 async function dotnetPublish() {
@@ -77,9 +76,8 @@ async function dotnetPublish() {
   return waitForProcess(spawn('dotnet', args, spawnOptions))
 }
 
-async function yarnBuild() {
-  const args = ['--cwd', 'src/services/OmegaService.Web/client-app', 'build']
-  return waitForProcess(spawn('yarn', args, spawnOptions))
+async function yarnBuildClientApp() {
+  return waitForProcess(spawn('yarn', ['build'], clientSpawnOptions))
 }
 
 async function dockerBashRunningContainer() {
@@ -183,7 +181,7 @@ async function testDbMigrate() {
   return waitForProcess(spawn('dotnet', ['publish/Omega.DbMigrator.dll', 'testDbMigrate'], migratorSpawnOptionsWithInput))
 }
 
-const build = parallel(dotnetPublish, yarnBuild)
+const build = parallel(dotnetPublish, yarnBuildClientApp)
 
 // Runs yarn install on client app while also copying client-app .env.template to .env.
 // Add other initial setup tasks here when they're needed.

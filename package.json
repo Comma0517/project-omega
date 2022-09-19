@@ -35,7 +35,7 @@
     "dotnetDevCerts": "dotnet dev-certs https --trust"
   },
   "devDependencies": {
-    "@mikeyt23/gulp-utils": "^1.1.1",
+    "@mikeyt23/gulp-utils": "^1.1.2",
     "@types/gulp": "^4.0.8",
     "concurrently": "^6.0.0",
     "gulp": "^4.0.2",
