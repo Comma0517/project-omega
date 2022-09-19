@@ -12,7 +12,7 @@ namespace Omega.Plumbing
         [SettingInfo(DefaultValue = "localhost", DefaultForEnvironment = DefaultSettingForEnvironment.LocalOnly, ShouldLogValue = true)]
         OMEGA_DEFAULT_DB_HOST,
 
-        [SettingInfo(DefaultValue = "1433", DefaultForEnvironment = DefaultSettingForEnvironment.LocalOnly, ShouldLogValue = true)]
+        [SettingInfo(DefaultValue = "1434", DefaultForEnvironment = DefaultSettingForEnvironment.LocalOnly, ShouldLogValue = true)]
         OMEGA_DEFAULT_DB_PORT,
 
         [SettingInfo(DefaultValue = "sa", DefaultForEnvironment = DefaultSettingForEnvironment.LocalOnly)]
