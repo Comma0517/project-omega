@@ -23,6 +23,13 @@
     chalk "^2.0.0"
     js-tokens "^4.0.0"
 
+"@mikeyt23/gulp-utils@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@mikeyt23/gulp-utils/-/gulp-utils-1.1.1.tgz#3491001d7f7994d2a2f3766067d78b2b031a7a0e"
+  integrity sha512-vUjc0uSm5OZmEfVZ1nLCDUXcbkaGpktmNOgYRgmrxI+kZWiMlPsLGytM4P0HlvbUhYy4mFnSXWFlrwPIpZlqHA==
+  dependencies:
+    which "^2.0.2"
+
 "@types/expect@^1.20.4":
   version "1.20.4"
   resolved "https://registry.yarnpkg.com/@types/expect/-/expect-1.20.4.tgz#8288e51737bf7e3ab5d7c77bfa695883745264e5"

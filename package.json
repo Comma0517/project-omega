@@ -31,15 +31,16 @@
     "dbDropAll": "yarn gulp dbDropAll",
     "testDbMigrate": "yarn gulp testDbMigrate",
     "syncEnvFiles": "yarn gulp syncEnvFiles",
+    "deleteEnvFiles": "yarn gulp deleteEnvFiles",
     "dotnetDevCerts": "dotnet dev-certs https --trust"
   },
   "devDependencies": {
+    "@mikeyt23/gulp-utils": "^1.1.1",
     "@types/gulp": "^4.0.8",
     "concurrently": "^6.0.0",
     "gulp": "^4.0.2",
     "rimraf": "^3.0.2",
     "ts-node": "^9.1.1",
-    "which": "^2.0.2",
     "yargs": "^16.2.0"
   }
 }
