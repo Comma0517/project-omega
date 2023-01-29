@@ -4,7 +4,7 @@ The last enterprise web architecture pattern you'll ever need. Until the next on
 
 ## TL;DR
 
-The goal is to optimize the developer experience by being able to:
+The goal is to optimize the develope experience by being able to:
 
 - Develope locally as if it's a monolith
 - Deploy as separate microservices
