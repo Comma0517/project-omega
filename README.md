@@ -6,7 +6,7 @@ The last enterprise web architecture pattern you'll ever need. Until the next on
 
 The goal is to optimize the developer experience by being able to:
 
-- Develop locally as if it's a monolith
+- Develope locally as if it's a monolith
 - Deploy as separate microservices
 - Simulate the production environment locally using docker
 
